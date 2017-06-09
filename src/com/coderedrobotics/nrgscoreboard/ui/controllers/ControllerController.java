@@ -27,6 +27,9 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -85,8 +88,17 @@ public class ControllerController implements Initializable {
     private Stage matchesOverviewStage = null;
     private Stage editCompetitorNamesStage = null;
 
+    private boolean windowed = false;
+    private int width = 1024;
+    private int height = 768;
+    
+    private ObservableList aspectRatio1Items;
+    private ObservableList aspectRatio2Items;
+    private ObservableList aspectRatio3Items;
+    private ObservableList aspectRatio4Items;
+    
     private Match[] matches;
-
+    
     @FXML
     private Label currentMatchLabel;
 
@@ -174,10 +186,32 @@ public class ControllerController implements Initializable {
     @FXML
     private Label matchClock;
 
-    private boolean windowed = false;
-    private int width = 1024;
-    private int height = 768;
-
+    public ControllerController() {
+        aspectRatio1Items = FXCollections.observableArrayList();
+        aspectRatio1Items.add("640 x 480");
+        aspectRatio1Items.add("800 x 600");
+        aspectRatio1Items.add("1024 x 768");
+        aspectRatio1Items.add("1152 x 864");
+        aspectRatio1Items.add("1600 x 1200");
+        aspectRatio2Items = FXCollections.observableArrayList();
+        aspectRatio2Items.add("1280 x 720");
+        aspectRatio2Items.add("1600 x 900");
+        aspectRatio2Items.add("1920 x 1080");
+        aspectRatio2Items.add("2560 x 1440");
+        aspectRatio3Items = FXCollections.observableArrayList();
+        aspectRatio3Items.add("1280 x 800");
+        aspectRatio3Items.add("1440 x 900");
+        aspectRatio3Items.add("1680 x 1050");
+        aspectRatio3Items.add("1920 x 1200");
+        aspectRatio3Items.add("2560 x 1600");
+        aspectRatio4Items = FXCollections.observableArrayList();
+        aspectRatio4Items.add("1280 x 768");
+        aspectRatio4Items.add("1280 x 1024");
+        aspectRatio4Items.add("1360 x 768");
+        aspectRatio4Items.add("1366 x 768");
+        aspectRatio4Items.add("1024 x 600");
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         redScoreField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -786,11 +820,31 @@ public class ControllerController implements Initializable {
     
     @FXML
     private void aspectRatioChanged(ActionEvent event) {
-        
+        int selection = aspectRatioPicker.getSelectionModel().getSelectedIndex();
+        switch (selection) {
+            case 0:
+                displayResolutionPicker.setItems(aspectRatio1Items);
+                break;
+            case 1:
+                displayResolutionPicker.setItems(aspectRatio2Items);
+                break;
+            case 2:
+                displayResolutionPicker.setItems(aspectRatio3Items);
+                break;
+            default:
+                displayResolutionPicker.setItems(aspectRatio4Items);
+                break;
+        }
     }
     
     @FXML
     private void projectorResolutionChanged(ActionEvent event){
-        
+        String resolution = ((ObservableList<String>) displayResolutionPicker.getItems()).get(displayResolutionPicker.getSelectionModel().getSelectedIndex());
+        String[] items = resolution.split("x");
+        items[0] = items[0].trim();
+        items[1] = items[1].trim();
+        width = Integer.parseInt(items[0]);
+        height = Integer.parseInt(items[1]);
+        setupProjectorStage();
     }
 }
