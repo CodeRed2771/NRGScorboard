@@ -4,6 +4,7 @@ import com.coderedrobotics.nrgscoreboard.Main;
 import com.coderedrobotics.nrgscoreboard.Schedule;
 import com.coderedrobotics.nrgscoreboard.Schedule.Match;
 import com.coderedrobotics.nrgscoreboard.Team;
+import com.sun.prism.paint.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedInputStream;
@@ -34,6 +35,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -278,21 +280,34 @@ public class ControllerController implements Initializable {
         }
         
         AnchorPane background = new AnchorPane();
-        background.setStyle("-fx-background-color: #666;");
+        background.setStyle("-fx-background-color: #333;");
 
+        
+//        matchLayoutRoot.setScaleY(height / 768d);
+        matchLayoutRoot.minWidth(width);
+        matchLayoutRoot.minHeight(height);
+        matchLayoutRoot.prefWidth((width));
+        matchLayoutRoot.prefHeight(height);
+        matchLayoutRoot.resize(width, height);
+        matchLayoutRoot.layout();
+//        matchLayoutRoot.setScaleX(height / 768d);
+        
+        
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(background);
+        stackPane.setStyle("-fx-background-color: #f00");
+        stackPane.setAlignment(Pos.CENTER);
+//        stackPane.getChildren().add(background);        
         stackPane.getChildren().add(matchLayoutRoot);
         stackPane.getChildren().add(logoLayoutRoot);
         stackPane.getChildren().add(scoreLayoutRoot);
         stackPane.getChildren().add(preMatchLayoutRoot);
-
+                
         matchLayoutRoot.setOpacity(0.0);
         logoLayoutRoot.setOpacity(1.0);
         scoreLayoutRoot.setOpacity(0.0);
         preMatchLayoutRoot.setOpacity(0.0);
 
-        Scene scene = new Scene(stackPane);
+        Scene scene = new Scene(stackPane, width, height);
         Stage stage = new Stage();
 
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
