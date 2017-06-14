@@ -1,10 +1,10 @@
-d,l,m,k
-l,m,k,d
-l,d,m,k
-m,d,l,k
-m,k,l,d
-k,m,d,l
-k,l,m,d
-m,k,d,l
-m,k,l,d
-k,l,m,d
+Team 4,Team 8,Team 2,Team 1 
+Team 3,Team 6,Team 9,Team 7
+Team 5,Team 10,Team 1 ,Team 2
+Team 4,Team 3,Team 6,Team 5
+Team 9,Team 8,Team 10,Team 7
+Team 10,Team 8,Team 4,Team 9
+Team 2,Team 1 ,Team 6,Team 3
+Team 7,Team 5,Team 2,Team 1 
+Team 5,Team 4,Team 6,Team 10
+Team 8,Team 3,Team 9,Team 7

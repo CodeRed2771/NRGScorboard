@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import java.lang.Double?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: #666;" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.ScoreController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: #333" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.ScoreController">
    <children>
       <StackPane layoutX="58.0" layoutY="62.0">
          <children>
@@ -30,23 +24,55 @@
       </StackPane>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ddb17f" height="408.0" layoutX="62.0" layoutY="139.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="4.0" width="429.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ddb17f" height="408.0" layoutX="533.0" layoutY="139.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="4.0" width="429.0" />
-      <StackPane layoutX="216.0" layoutY="417.0">
+      <StackPane layoutX="195.0" layoutY="493.0">
          <children>
-            <Circle fill="RED" radius="143.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="redscore" prefHeight="286.0" prefWidth="286.0" style="-fx-alignment: center;" text="00" textFill="WHITE">
+            <Polygon fill="RED" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0">
+               <points>
+                  <Double fx:value="0.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="300.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="300.0" />
+                  <Double fx:value="250.0" />
+                  <Double fx:value="150.0" />
+                  <Double fx:value="200.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="250.0" />
+               </points>
+            </Polygon>
+            <Label fx:id="redscore" prefHeight="150.0" prefWidth="286.0" style="-fx-alignment: center;" text="00" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="175.0" />
                </font>
+               <StackPane.margin>
+                  <Insets top="-50.0" />
+               </StackPane.margin>
             </Label>
          </children>
       </StackPane>
-      <StackPane layoutX="522.0" layoutY="417.0">
+      <StackPane layoutX="529.0" layoutY="495.0">
          <children>
-            <Circle fill="DODGERBLUE" radius="143.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="bluescore" prefHeight="286.0" prefWidth="286.0" style="-fx-alignment: center;" text="00" textFill="WHITE">
+            <Polygon fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0">
+              <points>
+                <Double fx:value="0.0" />
+                <Double fx:value="0.0" />
+                <Double fx:value="300.0" />
+                <Double fx:value="0.0" />
+                <Double fx:value="300.0" />
+                <Double fx:value="250.0" />
+                <Double fx:value="150.0" />
+                <Double fx:value="200.0" />
+                <Double fx:value="0.0" />
+                <Double fx:value="250.0" />
+              </points>
+            </Polygon>
+            <Label fx:id="bluescore" prefHeight="150.0" prefWidth="286.0" style="-fx-alignment: center;" text="00" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="175.0" />
                </font>
+               <StackPane.margin>
+                  <Insets top="-50.0" />
+               </StackPane.margin>
             </Label>
          </children>
       </StackPane>
@@ -154,35 +180,117 @@
             </Polygon>
          </children>
       </StackPane>
-      <Label fx:id="red1info" layoutX="58.0" layoutY="329.0" text="Red 1: " translateX="25.0">
+      <Label fx:id="red1info" layoutX="58.0" layoutY="427.0" text="Red 1: " translateX="25.0">
          <font>
             <Font name="System Bold" size="19.0" />
          </font>
       </Label>
-      <Label fx:id="red2info" layoutX="58.0" layoutY="357.0" text="Red 2:" translateX="25.0">
+      <Label fx:id="red2info" layoutX="58.0" layoutY="455.0" text="Red 2:" translateX="25.0">
          <font>
             <Font name="System Bold" size="19.0" />
          </font>
       </Label>
-      <Label layoutX="58.0" layoutY="301.0" text="Rankings" translateX="25.0">
+      <Label layoutX="58.0" layoutY="399.0" text="Rankings" translateX="25.0">
          <font>
             <Font size="19.0" />
          </font>
       </Label>
-      <Label fx:id="blue1info" layoutX="533.0" layoutY="329.0" text="Blue 1:" translateX="25.0">
+      <Label fx:id="blue1info" layoutX="524.0" layoutY="427.0" text="Blue 1:" translateX="25.0">
          <font>
             <Font name="System Bold" size="19.0" />
          </font>
       </Label>
-      <Label fx:id="blue2info" layoutX="533.0" layoutY="357.0" text="Blue 2:" translateX="25.0">
+      <Label fx:id="blue2info" layoutX="524.0" layoutY="455.0" text="Blue 2:" translateX="25.0">
          <font>
             <Font name="System Bold" size="19.0" />
          </font>
       </Label>
-      <Label layoutX="533.0" layoutY="301.0" text="Rankings" translateX="25.0">
+      <Label layoutX="524.0" layoutY="399.0" text="Rankings" translateX="25.0">
          <font>
             <Font size="19.0" />
          </font>
       </Label>
+      <Line endX="387.0" layoutX="83.0" layoutY="387.0" />
+      <Line endX="387.0" layoutX="554.0" layoutY="387.0" />
+      <Label layoutX="83.0" layoutY="292.0" text="Score Breakdown:">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <Label layoutX="550.0" layoutY="292.0" text="Score Breakdown:">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <Label fx:id="redMatchPoints" layoutX="83.0" layoutY="320.0" text="Red Points:">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <Label fx:id="bluePenaltyPoints" layoutX="83.0" layoutY="348.0" text="Blue Penalty:">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <Label fx:id="blueMatchPoints" layoutX="549.0" layoutY="320.0" text="Blue Points: ">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <Label fx:id="redPenaltyPoints" layoutX="549.0" layoutY="348.0" text="Red Penalty: ">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <StackPane fx:id="redWinsBanner" layoutX="-4.0" layoutY="149.0" rotate="-30.0">
+         <children>
+            <Polygon fill="#ffea00" stroke="BLACK" strokeType="INSIDE">
+              <points>
+                <Double fx:value="0.0" />
+                <Double fx:value="0.0" />
+                <Double fx:value="250.0" />
+                <Double fx:value="0.0" />
+                <Double fx:value="230.0" />
+                <Double fx:value="20.0" />
+                <Double fx:value="250.0" />
+                <Double fx:value="40.0" />
+                <Double fx:value="0.0" />
+                <Double fx:value="40.0" />
+                <Double fx:value="20.0" />
+                <Double fx:value="20.0" />
+              </points>
+            </Polygon>
+            <Label fx:id="redWinsLabel" text="Red Alliance Wins!">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
+      <StackPane fx:id="blueWinsBanner" layoutX="775.0" layoutY="148.0" rotate="30.0">
+         <children>
+            <Polygon fill="#ffea00" stroke="BLACK" strokeType="INSIDE">
+               <points>
+                  <Double fx:value="0.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="250.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="230.0" />
+                  <Double fx:value="20.0" />
+                  <Double fx:value="250.0" />
+                  <Double fx:value="40.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="40.0" />
+                  <Double fx:value="20.0" />
+                  <Double fx:value="20.0" />
+               </points>
+            </Polygon>
+            <Label fx:id="blueWinsLabel" text="Blue Alliance Wins!">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
    </children>
 </AnchorPane>

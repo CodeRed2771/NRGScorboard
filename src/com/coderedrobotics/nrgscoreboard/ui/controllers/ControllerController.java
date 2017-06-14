@@ -271,6 +271,7 @@ public class ControllerController implements Initializable {
         editNamesController = editNamesLayoutLoader.getController();
 
         setupProjectorStage();
+        matchController.setControlDisplayTimeLabel(matchClock);
     }
     
     private void setupProjectorStage() {
@@ -282,30 +283,32 @@ public class ControllerController implements Initializable {
         AnchorPane background = new AnchorPane();
         background.setStyle("-fx-background-color: #333;");
 
-        
-//        matchLayoutRoot.setScaleY(height / 768d);
-        matchLayoutRoot.minWidth(width);
-        matchLayoutRoot.minHeight(height);
-        matchLayoutRoot.prefWidth((width));
-        matchLayoutRoot.prefHeight(height);
-        matchLayoutRoot.resize(width, height);
-        matchLayoutRoot.layout();
-//        matchLayoutRoot.setScaleX(height / 768d);
-        
+        double scaleFactor = Math.min(height / 768d, width / 1024d);
+        matchLayoutRoot.setScaleY(scaleFactor);
+        matchLayoutRoot.setScaleX(scaleFactor);
+        logoLayoutRoot.setScaleY(scaleFactor);
+        logoLayoutRoot.setScaleX(scaleFactor);
+        scoreLayoutRoot.setScaleY(scaleFactor);
+        scoreLayoutRoot.setScaleX(scaleFactor);
+        preMatchLayoutRoot.setScaleY(scaleFactor);
+        preMatchLayoutRoot.setScaleX(scaleFactor);
         
         StackPane stackPane = new StackPane();
-        stackPane.setStyle("-fx-background-color: #f00");
-        stackPane.setAlignment(Pos.CENTER);
-//        stackPane.getChildren().add(background);        
+        stackPane.setStyle("-fx-background-color: #000");
+        stackPane.setAlignment(Pos.CENTER);    
         stackPane.getChildren().add(matchLayoutRoot);
         stackPane.getChildren().add(logoLayoutRoot);
         stackPane.getChildren().add(scoreLayoutRoot);
         stackPane.getChildren().add(preMatchLayoutRoot);
                 
-        matchLayoutRoot.setOpacity(0.0);
-        logoLayoutRoot.setOpacity(1.0);
-        scoreLayoutRoot.setOpacity(0.0);
-        preMatchLayoutRoot.setOpacity(0.0);
+        if (currentLayoutRoot == null) {
+            currentLayoutRoot = logoLayoutRoot;
+        }
+        
+        matchLayoutRoot.setOpacity(currentLayoutRoot == matchLayoutRoot ? 1 : 0);
+        logoLayoutRoot.setOpacity(currentLayoutRoot == logoLayoutRoot ? 1 : 0);
+        scoreLayoutRoot.setOpacity(currentLayoutRoot == scoreLayoutRoot ? 1 : 0);
+        preMatchLayoutRoot.setOpacity(currentLayoutRoot == preMatchLayoutRoot ? 1 : 0);
 
         Scene scene = new Scene(stackPane, width, height);
         Stage stage = new Stage();
@@ -336,7 +339,7 @@ public class ControllerController implements Initializable {
             stage.setY(0);
             stage.initStyle(StageStyle.UNDECORATED);
         }
-        
+                
         stage.setTitle("NRG Scoreboard");
         stage.setScene(scene);
         
@@ -344,32 +347,6 @@ public class ControllerController implements Initializable {
         projectorStage = stage;
     }
     
-//    public void init(Parent matchLayoutRoot, Parent logoLayoutRoot, Parent scoreLayoutRoot,
-//            Parent preMatchLayoutRoot, Parent playoffsControllerLayoutRoot,
-//            Parent generateMatchesLayoutRoot, Parent matchesOverviewLayoutRoot, Parent editNamesLayoutRoot,
-//            MatchController matchController, ScoreController scoreController, PreMatchController preMatchController,
-//            PlayoffsControllerController playoffsController, GenerateMatchesController generateMatchesController,
-//            MatchesOverviewController matchesOverviewController, EditNamesController editNamesController, Stage projectorStage) {
-//        this.matchLayoutRoot = matchLayoutRoot;
-//        this.logoLayoutRoot = logoLayoutRoot;
-//        this.scoreLayoutRoot = scoreLayoutRoot;
-//        this.preMatchLayoutRoot = preMatchLayoutRoot;
-//        this.playoffsControllerLayoutRoot = playoffsControllerLayoutRoot;
-//        this.playoffsController = playoffsController;
-//        this.matchController = matchController;
-//        this.scoreController = scoreController;
-//        this.preMatchController = preMatchController;
-//        this.projectorStage = projectorStage;
-//        this.generateMatchesLayoutRoot = generateMatchesLayoutRoot;
-//        this.generateMatchesController = generateMatchesController;
-//        this.matchesOverviewLayoutRoot = matchesOverviewLayoutRoot;
-//        this.matchesOverviewController = matchesOverviewController;
-//        this.editNamesLayoutRoot = editNamesLayoutRoot;
-//        this.editNamesController = editNamesController;
-//
-//        matchController.setControlDisplayTimeLabel(matchClock);
-//    }
-
     @FXML
     private void startMatch(ActionEvent event) {
         try {
@@ -379,7 +356,7 @@ public class ControllerController implements Initializable {
             Clip c = AudioSystem.getClip();
             c.open(start);
             c.start();
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException | IllegalArgumentException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         matchController.startTimer();
@@ -394,7 +371,7 @@ public class ControllerController implements Initializable {
             Clip c = AudioSystem.getClip();
             c.open(start);
             c.start();
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException | IllegalArgumentException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         matchController.stopMatch();
@@ -853,7 +830,7 @@ public class ControllerController implements Initializable {
     }
     
     @FXML
-    private void projectorResolutionChanged(ActionEvent event){
+    private void projectorResolutionChanged(ActionEvent event) {
         String resolution = ((ObservableList<String>) displayResolutionPicker.getItems()).get(displayResolutionPicker.getSelectionModel().getSelectedIndex());
         String[] items = resolution.split("x");
         items[0] = items[0].trim();

@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 
 /**
@@ -35,8 +36,24 @@ public class ScoreController implements Initializable {
     @FXML
     private Label redscore;
     @FXML
-    private Label bluescore;    
-    
+    private Label bluescore;
+    @FXML
+    private Label redMatchPoints;
+    @FXML
+    private Label blueMatchPoints;
+    @FXML
+    private Label redPenaltyPoints;
+    @FXML
+    private Label bluePenaltyPoints;
+    @FXML
+    private StackPane redWinsBanner;
+    @FXML
+    private StackPane blueWinsBanner;
+    @FXML
+    private Label redWinsLabel;
+    @FXML
+    private Label blueWinsLabel;
+
     public void updateDisplay(Match match) {
         this.match.setText("Match " + match.getNumber());
         this.red1.setText(match.getRed1().getName());
@@ -56,6 +73,24 @@ public class ScoreController implements Initializable {
         red2info.setText(match.getRed2().getName() + ": Ranked " + match.getRed2().getRank());
         blue1info.setText(match.getBlue1().getName() + ": Ranked " + match.getBlue1().getRank());
         blue2info.setText(match.getBlue2().getName() + ": Ranked " + match.getBlue2().getRank());
+        redMatchPoints.setText("Red Points: " + match.getRedPoints());
+        redPenaltyPoints.setText("Red Penalty: " + match.getRedPenalty());
+        blueMatchPoints.setText("Blue Points: " + match.getBluePoints());
+        bluePenaltyPoints.setText("Blue Penalty: " + match.getBluePenalty());
+        if (match.getBlueScore() > match.getRedScore()) {
+            redWinsBanner.setOpacity(0.0);
+            blueWinsBanner.setOpacity(1.0);
+            blueWinsLabel.setText("Blue Alliance Wins!");
+        } else if (match.getBlueScore() < match.getRedScore()) {
+            redWinsBanner.setOpacity(1.0);
+            blueWinsBanner.setOpacity(0.0);
+            redWinsLabel.setText("Red Alliance Wins!");
+        } else {
+            redWinsBanner.setOpacity(1.0);
+            blueWinsBanner.setOpacity(1.0);
+            redWinsLabel.setText("Tie!");
+            blueWinsLabel.setText("Tie!");
+        }
     }
 
     @Override

@@ -96,7 +96,7 @@ public class MatchController implements Initializable {
                         Clip c = AudioSystem.getClip();
                         c.open(start);
                         c.start();
-                    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException | IllegalArgumentException ex) {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     timePercentage.setStyle("-fx-progress-color: #FFD700;");
