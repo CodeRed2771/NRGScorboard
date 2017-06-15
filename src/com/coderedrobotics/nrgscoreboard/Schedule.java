@@ -44,6 +44,7 @@ public class Schedule {
         int redScore = 0;
         int blueScore = 0;
         boolean scored;
+        private boolean setRedPoints, setRedPenalty, setBluePoints, setBluePenalty;
 
         public Match(Team red1, Team red2, Team blue1, Team blue2, int number) {
             this.red1 = red1;
@@ -102,6 +103,7 @@ public class Schedule {
 
         public void setRedPenalty(int redPenalty) {
             this.redPenalty = redPenalty;
+            setRedPenalty = true;
         }
 
         public int getBluePoints() {
@@ -110,6 +112,7 @@ public class Schedule {
 
         public void setBluePoints(int bluePoints) {
             this.bluePoints = bluePoints;
+            setBluePoints = true;
         }
 
         public int getBluePenalty() {
@@ -118,6 +121,7 @@ public class Schedule {
 
         public void setBluePenalty(int bluePenalty) {
             this.bluePenalty = bluePenalty;
+            setBluePenalty = true;
         }
 
         public int getRedPoints() {
@@ -126,6 +130,15 @@ public class Schedule {
 
         public void setRedPoints(int redPoints) {
             this.redPoints = redPoints;
+            setRedPoints = true;
+        }
+        
+        public void rescore() {
+            if (scored || (setRedPoints && setBluePoints && setRedPenalty && setBluePenalty)) {
+                redScore = bluePenalty + redPoints;
+                blueScore = redPenalty + bluePoints;
+                scored = true;
+            }
         }
         
         public boolean isRed(Team t) {

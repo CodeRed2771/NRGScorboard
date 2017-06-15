@@ -17,13 +17,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="AnchorPane" prefHeight="514.0" prefWidth="561.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.ControllerController">
+<AnchorPane fx:id="AnchorPane" maxHeight="559.0" maxWidth="561.0" minHeight="559.0" minWidth="561.0" prefHeight="559.0" prefWidth="561.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.ControllerController">
     <children>
-        <Button fx:id="loadMatchScheduleButton" layoutX="218.0" layoutY="11.0" mnemonicParsing="false" onAction="#loadMatchSchedule" text="Load Match Schedule" />
-        <Button fx:id="helpButton" layoutX="169.0" layoutY="11.0" mnemonicParsing="false" onAction="#help" text="Help" />
-        <Button fx:id="nextMatchButton" disable="true" layoutX="469.0" layoutY="11.0" mnemonicParsing="false" onAction="#nextMatch" text="Next Match" />
-        <Button fx:id="previousMatchButton" disable="true" layoutX="362.0" layoutY="11.0" mnemonicParsing="false" onAction="#previousMatch" text="Previous Match" />
-      <Pane layoutX="14.0" layoutY="191.0" prefHeight="200.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.leftAnchor="14.0">
+        <Button fx:id="helpButton" layoutX="197.0" layoutY="11.0" mnemonicParsing="false" onAction="#help" text="Help" AnchorPane.rightAnchor="323.0" AnchorPane.topAnchor="11.0" />
+        <Button fx:id="nextMatchButton" disable="true" layoutX="469.0" layoutY="11.0" mnemonicParsing="false" onAction="#nextMatch" text="Next Match" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="11.0" />
+        <Button fx:id="previousMatchButton" disable="true" layoutX="362.0" layoutY="11.0" mnemonicParsing="false" onAction="#previousMatch" text="Previous Match" AnchorPane.rightAnchor="101.0" AnchorPane.topAnchor="11.0" />
+      <Pane layoutX="14.0" layoutY="265.0" prefHeight="200.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="265.0">
          <children>
                 <Label layoutX="14.0" layoutY="14.0" text="Scoring">
                <font>
@@ -86,10 +85,10 @@
                   </VBox>
                </children>
             </HBox>
-            <Button fx:id="editRecordedScoresButton" disable="true" layoutX="109.0" layoutY="157.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="141.0" text="Edit Recorded Scores..." />
+            <Button fx:id="viewMatchScheduleButton" disable="true" layoutX="139.0" layoutY="157.0" mnemonicParsing="false" onAction="#viewMatchOverview" text="View / Edit Scores" />
          </children>
       </Pane>
-      <Pane layoutX="14.0" layoutY="48.0" prefHeight="143.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;" AnchorPane.leftAnchor="14.0">
+      <Pane layoutX="14.0" layoutY="122.0" prefHeight="143.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="122.0">
          <children>
               <ComboBox fx:id="projectorLocationPicker" layoutX="118.0" layoutY="43.0" onAction="#projectorLocationAction" prefHeight="25.0" prefWidth="134.0" promptText="&lt;Select a Location&gt;">
                   <items>
@@ -106,7 +105,7 @@
               </ComboBox>
               <Label layoutX="15.0" layoutY="47.0" text="Projector Location:" />
             <CheckBox fx:id="windowedModeOption" layoutX="14.0" layoutY="74.0" mnemonicParsing="false" onAction="#toggleWindowedMode" text="Windowed Mode" />
-            <ComboBox fx:id="aspectRatioPicker" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="64.0" onAction="#aspectRatioChanged">
+            <ComboBox fx:id="aspectRatioPicker" layoutX="14.0" layoutY="101.0" onAction="#aspectRatioChanged" prefHeight="25.0" prefWidth="64.0">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="4:3" />
@@ -119,7 +118,7 @@
                     <String fx:value="4:3" />
                 </value>
             </ComboBox>
-            <ComboBox fx:id="displayResolutionPicker" layoutX="86.0" layoutY="101.0" prefHeight="25.0" prefWidth="166.0" onAction="#projectorResolutionChanged" promptText="&lt;Screen Resolution&gt;">
+            <ComboBox fx:id="displayResolutionPicker" layoutX="86.0" layoutY="101.0" onAction="#projectorResolutionChanged" prefHeight="25.0" prefWidth="166.0" promptText="&lt;Screen Resolution&gt;">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="640 x 480" />
@@ -137,7 +136,7 @@
             </Label>
          </children>
       </Pane>
-      <Pane layoutX="281.0" layoutY="48.0" prefHeight="143.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;" AnchorPane.rightAnchor="14.0">
+      <Pane layoutX="283.0" layoutY="122.0" prefHeight="143.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="122.0">
          <children>
             <Label layoutX="14.0" layoutY="14.0" text="Match Controls">
                <font>
@@ -150,12 +149,12 @@
             <Label fx:id="matchClock" layoutX="219.0" layoutY="14.0" text="00:00" />
          </children>
       </Pane>
-          <Label fx:id="currentMatchLabel" layoutX="14.0" layoutY="15.0" text="NO MATCH DATA">
+          <Label fx:id="currentMatchLabel" layoutX="14.0" layoutY="15.0" text="NO MATCH DATA" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="15.0">
               <font>
                   <Font name="System Bold" size="12.0" />
               </font>
           </Label>
-      <Pane layoutX="281.0" layoutY="191.0" prefHeight="200.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.rightAnchor="14.0">
+      <Pane layoutX="283.0" layoutY="265.0" prefHeight="200.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="265.0">
          <children>
             <Label layoutX="14.0" layoutY="14.0" text="Current Display">
                <font>
@@ -191,7 +190,7 @@
               </VBox>
          </children>
       </Pane>
-      <Pane layoutX="9.0" layoutY="391.0" prefHeight="81.0" prefWidth="530.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+      <Pane layoutX="14.0" layoutY="465.0" prefHeight="81.0" prefWidth="530.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="464.0">
          <children>
             <Label layoutX="14.0" layoutY="14.0" text="Advanced">
                <font>
@@ -199,13 +198,23 @@
                </font>
             </Label>
             <Button fx:id="disqualifyCompetitorButton" disable="true" layoutX="14.0" layoutY="41.0" mnemonicParsing="false" text="Remove Competitor..." />
-            <Button fx:id="addLateCompetitorButton" disable="true" layoutX="160.0" layoutY="41.0" mnemonicParsing="false" text="Add Late Competitor..." />
-            <Button fx:id="editCompetitorNamesButton" disable="true" layoutX="302.0" layoutY="41.0" mnemonicParsing="false" onAction="#editCompetitorNames" text="Edit Competitor Names..." />
+            <Button fx:id="addLateCompetitorButton" disable="true" layoutX="151.0" layoutY="41.0" mnemonicParsing="false" text="Add Late Competitor..." />
+            <Button fx:id="editCompetitorNamesButton" disable="true" layoutX="292.0" layoutY="41.0" mnemonicParsing="false" onAction="#editCompetitorNames" text="Edit Competitor Names..." />
          </children>
       </Pane>
-      <Separator layoutX="354.0" layoutY="7.0" orientation="VERTICAL" prefHeight="34.0" prefWidth="2.0" />
-        <Button fx:id="competitionReportButton" disable="true" layoutX="57.0" layoutY="477.0" mnemonicParsing="false" onAction="#competitionReport" text="View Rankings..." />
-      <Button fx:id="viewMatchScheduleButton" disable="true" layoutX="171.0" layoutY="477.0" mnemonicParsing="false" onAction="#viewMatchOverview" text="View Match Schedule..." />
-      <Button fx:id="generateMatchCSVScheduleButton" layoutX="319.0" layoutY="477.0" mnemonicParsing="false" onAction="#generateMatchSchedule" text="Generate Match Schedule..." />
+      <Separator layoutX="354.0" layoutY="7.0" orientation="VERTICAL" prefHeight="34.0" prefWidth="2.0" AnchorPane.rightAnchor="201.0" AnchorPane.topAnchor="7.0" />
+        <Button fx:id="competitionReportButton" disable="true" layoutX="246.0" layoutY="11.0" mnemonicParsing="false" onAction="#competitionReport" text="View Rankings..." AnchorPane.rightAnchor="214.0" AnchorPane.topAnchor="11.0" />
+      <Pane layoutX="13.0" layoutY="41.0" prefHeight="81.0" prefWidth="530.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="41.0">
+         <children>
+            <Label layoutX="14.0" layoutY="14.0" text="Schedule Management">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Button fx:id="generateMatchCSVScheduleButton" layoutX="14.0" layoutY="41.0" mnemonicParsing="false" onAction="#generateMatchSchedule" text="Generate Match Schedule..." />
+              <Button fx:id="loadMatchScheduleButton" layoutX="180.0" layoutY="41.0" mnemonicParsing="false" onAction="#loadMatchSchedule" text="Load Match Schedule CSV" />
+            <Button fx:id="loadCompetitionBackupButton" layoutX="340.0" layoutY="41.0" mnemonicParsing="false" onAction="#loadCompetitionBackup" text="Load Compeition From Backup" />
+         </children>
+      </Pane>
     </children>
 </AnchorPane>

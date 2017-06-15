@@ -4,12 +4,13 @@ import com.coderedrobotics.nrgscoreboard.Main;
 import com.coderedrobotics.nrgscoreboard.Schedule;
 import com.coderedrobotics.nrgscoreboard.Schedule.Match;
 import com.coderedrobotics.nrgscoreboard.Team;
-import com.sun.prism.paint.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -29,7 +30,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,7 +43,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
@@ -75,9 +74,11 @@ public class ControllerController implements Initializable {
     private GenerateMatchesController generateMatchesController;
     private MatchesOverviewController matchesOverviewController;
     private EditNamesController editNamesController;
+    private RankingsController rankingsController;
     private int match = 0;
     private Parent matchLayoutRoot, logoLayoutRoot, scoreLayoutRoot, preMatchLayoutRoot, 
-            generateMatchesLayoutRoot, matchesOverviewLayoutRoot, editNamesLayoutRoot;
+            generateMatchesLayoutRoot, matchesOverviewLayoutRoot, editNamesLayoutRoot,
+            rankingsLayoutRoot;
     private Parent playoffsControllerLayoutRoot;
     private Parent currentLayoutRoot;
     private Parent previousLayoutRoot;
@@ -89,6 +90,7 @@ public class ControllerController implements Initializable {
     private Stage generateMatchScheduleStage = null;
     private Stage matchesOverviewStage = null;
     private Stage editCompetitorNamesStage = null;
+    private Stage rankingsStage = null;
 
     private boolean windowed = false;
     private int width = 1024;
@@ -132,9 +134,6 @@ public class ControllerController implements Initializable {
     private Button applyScoringButton;
 
     @FXML
-    private Button editRecordedScoresButton;
-
-    @FXML
     private Button previousMatchButton;
 
     @FXML
@@ -145,6 +144,9 @@ public class ControllerController implements Initializable {
 
     @FXML
     private Button loadMatchScheduleButton;
+    
+    @FXML
+    private Button loadCompetitionBackupButton;
 
     @FXML
     private Button eliminationSelectionButton;
@@ -270,6 +272,11 @@ public class ControllerController implements Initializable {
         editNamesLayoutRoot = (Parent) editNamesLayoutLoader.load();
         editNamesController = editNamesLayoutLoader.getController();
 
+        FXMLLoader rankingsLayoutLoader = new FXMLLoader();
+        rankingsLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/Rankings.fxml"));
+        rankingsLayoutRoot = (Parent) rankingsLayoutLoader.load();
+        rankingsController = rankingsLayoutLoader.getController();
+        
         setupProjectorStage();
         matchController.setControlDisplayTimeLabel(matchClock);
     }
@@ -445,6 +452,91 @@ public class ControllerController implements Initializable {
     }
 
     @FXML
+    private void loadCompetitionBackup(ActionEvent event) {
+        BufferedReader read;
+        String line;
+        HashMap<String, Team> teamsandnames = new HashMap<>();
+        ArrayList<Team> allteams = new ArrayList<>();
+        try {
+            read = new BufferedReader(new FileReader("competition_backup.csv"));
+            ArrayList<Schedule.Match> matches = new ArrayList<>();
+            read.readLine();
+            int mn = 1;
+            while ((line = read.readLine()) != null) {
+                System.out.println(line);
+                String[] data = line.split(",");
+                Team[] teams = new Team[4];
+                for (int i = 1; i < 5; i++) {
+                    if (teamsandnames.containsKey(data[i])) {
+                        teams[i - 1] = teamsandnames.get(data[i]);
+                    } else {
+                        Team t = new Team(data[i]);
+                        allteams.add(t);
+                        teamsandnames.put(data[i], t);
+                        teams[i - 1] = t;
+                    }
+                }
+                Schedule.Match m = new Schedule.Match(teams[0], teams[1], teams[2], teams[3], mn);
+                if (!data[5].equals("--")) {
+                    m.setScore(Integer.parseInt(data[5]), Integer.parseInt(data[6]),
+                            Integer.parseInt(data[9]), Integer.parseInt(data[7]),
+                            Integer.parseInt(data[10]), Integer.parseInt(data[8]));
+                }
+                mn++;
+                matches.add(m);
+            }
+            System.out.println("Read backup with: " + matches.size() + " matches and " + allteams.size() + " teams");
+            Schedule.initialize(matches.toArray(new Schedule.Match[0]), allteams.toArray(new Team[0]));
+            read.close();
+
+            finishUpInitialization();
+            
+            for (Match m : Schedule.getInstance().getMatches()) {
+                if (m.isScored()) {
+                    m.getRed1().addMatch(m);
+                    m.getRed2().addMatch(m);
+                    m.getBlue1().addMatch(m);
+                    m.getBlue2().addMatch(m);
+                }
+            }
+            rankTeams();
+        } catch (IOException | ArrayIndexOutOfBoundsException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Invalid Match Schedule");
+            alert.setHeaderText("Couldn't Read/Find Schedule");
+            alert.setContentText("An error occured while reading the backup file. "
+                    + "The file either was not found or is not formatted correctly. "
+                    + "Verify you have a CSV schdule file named \"competition_backup.csv\" in "
+                    + "the same directory as this application and try again.");
+
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+            String exceptionText = sw.toString();
+            Label label = new Label("Exception Details: ");
+
+            TextArea textArea = new TextArea(exceptionText);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(label, 0, 0);
+            expContent.add(textArea, 0, 1);
+
+            alert.getDialogPane().setExpandableContent(expContent);
+            alert.show();
+        }
+    }
+    
+    @FXML
     private void nextMatch(ActionEvent event) {
         if (match == matches.length - 1) {
             return;
@@ -532,22 +624,7 @@ public class ControllerController implements Initializable {
         m.getRed2().addMatch(m);
         m.getBlue1().addMatch(m);
         m.getBlue2().addMatch(m);
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        Team[] teams = Schedule.getInstance().getTeams();
-        for (int i = 0; i < teams.length; i++) {
-            map.put(i, teams[i].getTotalScore());
-        }
-        SortedSet<Map.Entry<Integer, Integer>> sortedEntries = new TreeSet<>(
-                (Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) -> {
-                    int res = e1.getValue().compareTo(e2.getValue());
-                    return -(res != 0 ? res : 1);
-                });
-        sortedEntries.addAll(map.entrySet());
-        int rank = 1;
-        for (Map.Entry<Integer, Integer> e : sortedEntries) {
-            teams[e.getKey()].setRank(rank);
-            rank++;
-        }
+        rankTeams();
         Platform.runLater(() -> {
             scoreController.updateDisplay(m);
             matchScoreDisplayOption.setDisable(false);
@@ -558,6 +635,7 @@ public class ControllerController implements Initializable {
         });
         
         matchesOverviewController.refresh();
+        writeCompetitionBackup();
     }
 
     @FXML
@@ -605,35 +683,18 @@ public class ControllerController implements Initializable {
     }
 
     @FXML
-    private void competitionReport(ActionEvent event) {
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        Team[] teams = Schedule.getInstance().getTeams();
-        for (int i = 0; i < teams.length; i++) {
-            map.put(i, teams[i].getTotalScore());
+    private void competitionReport(ActionEvent event) {        
+        if (rankingsStage != null) {
+            rankingsStage.show();
+            rankingsController.refresh();
+            return;
         }
-        SortedSet<Map.Entry<Integer, Integer>> sortedEntries = new TreeSet<>(
-                (Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) -> {
-                    int res = e1.getValue().compareTo(e2.getValue());
-                    return -(res != 0 ? res : 1);
-                });
-        sortedEntries.addAll(map.entrySet());
-        String data = "";
-        for (Map.Entry<Integer, Integer> e : sortedEntries) {
-            Team t = teams[e.getKey()];
-            data += String.format("%25s    %-10s%-20s%-20s%-10s", t.getName(), (t.getWins() + "-"
-                    + t.getLoses() + "-" + t.getTies()), "Avg. Score: "
-                    + t.getAverageScore(), "Total Score: " + t.getTotalScore(), "Rank: " + t.getRank()) + "\n";
-        }
-
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Competition Report");
-        alert.setHeaderText("Ranked Competition Data");
-        alert.setContentText(data);
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.setStyle("-fx-font-family: monospace");
-        alert.setResizable(true);
-        alert.show();
-        alert.setWidth(800);
+        Stage stage = new Stage();
+        stage.setTitle("Team Rankings");
+        stage.setScene(new Scene(rankingsLayoutRoot));
+        rankingsController.init();
+        stage.show();
+        rankingsStage = stage;
     }
 
     @FXML
@@ -721,8 +782,10 @@ public class ControllerController implements Initializable {
         Schedule.Match m = matches[match];
         Platform.runLater(() -> {
             matchScoreDisplayOption.setDisable(!m.isScored());
-            redScoreField.setText(m.isScored() ? String.valueOf(m.getRedScore()) : "");
-            blueScoreField.setText(m.isScored() ? String.valueOf(m.getBlueScore()) : "");
+            redScoreField.setText(m.isScored() ? String.valueOf(m.getRedPoints()) : "");
+            blueScoreField.setText(m.isScored() ? String.valueOf(m.getBluePoints()) : "");
+            redPenaltyField.setText(m.isScored() ? String.valueOf(m.getRedPenalty()) : "");
+            bluePenaltyField.setText(m.isScored() ? String.valueOf(m.getBluePenalty()) : "");
             currentMatchLabel.setText("Current Match: " + (match + 1));
             matchController.updateTeamDisplays(m);
             preMatchController.updateTeamDisplays(matches[match]);
@@ -760,7 +823,10 @@ public class ControllerController implements Initializable {
         stage.setTitle("Edit Competitor Names");
         stage.setScene(new Scene(editNamesLayoutRoot));
         editNamesController.init();
-        editNamesController.setCompletedCallback(matchesOverviewController::refresh);
+        editNamesController.setCompletedCallback(() -> {
+            matchesOverviewController.refresh();
+            writeCompetitionBackup();
+        });
         stage.show();
         editCompetitorNamesStage = stage;
         matchesOverviewController.refresh();
@@ -782,15 +848,19 @@ public class ControllerController implements Initializable {
         blueScoreField.setDisable(false);
         eliminationSelectionButton.setDisable(false);
         loadMatchScheduleButton.setDisable(true);
+        loadCompetitionBackupButton.setDisable(true);
         redPenaltyField.setDisable(false);
         bluePenaltyField.setDisable(false);
         disqualifyCompetitorButton.setDisable(false);
         addLateCompetitorButton.setDisable(false);
         viewMatchScheduleButton.setDisable(false);
-        editRecordedScoresButton.setDisable(false);
         editCompetitorNamesButton.setDisable(false);
         
         setMatch(0);
+        
+        if (matches[match].isScored()) {
+            matchScoreDisplayOption.setDisable(false);
+        }
 
         currentLayoutRoot = logoLayoutRoot;
     }
@@ -806,6 +876,7 @@ public class ControllerController implements Initializable {
         stage.setTitle("Match Schedule");
         stage.setScene(new Scene(matchesOverviewLayoutRoot));
         matchesOverviewController.init();
+        matchesOverviewController.setEditCallback(this::overviewEditCallback);
         stage.show();
         matchesOverviewStage = stage;
     }
@@ -838,5 +909,69 @@ public class ControllerController implements Initializable {
         width = Integer.parseInt(items[0]);
         height = Integer.parseInt(items[1]);
         setupProjectorStage();
+    }
+    
+    private void overviewEditCallback(Match m) {
+        matchScoreDisplayOption.setDisable(!matches[match].isScored());
+        if (matches[match].isScored()) {
+            scoreController.updateDisplay(matches[match]);
+        }
+        writeCompetitionBackup();
+        
+        m.getRed1().addMatch(m);
+        m.getRed2().addMatch(m);
+        m.getBlue1().addMatch(m);
+        m.getBlue2().addMatch(m);
+        rankTeams();
+    }
+    
+    private void rankTeams() {
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        Team[] teams = Schedule.getInstance().getTeams();
+        for (int i = 0; i < teams.length; i++) {
+            map.put(i, teams[i].getTotalScore());
+        }
+        SortedSet<Map.Entry<Integer, Integer>> sortedEntries = new TreeSet<>(
+                (Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) -> {
+                    int res = e1.getValue().compareTo(e2.getValue());
+                    return -(res != 0 ? res : 1);
+                });
+        sortedEntries.addAll(map.entrySet());
+        int rank = 1;
+        for (Map.Entry<Integer, Integer> e : sortedEntries) {
+            teams[e.getKey()].setRank(rank);
+            rank++;
+        }
+    }
+
+    private void writeCompetitionBackup() {
+        File schedule = new File("competition_backup.csv");
+        try {
+            schedule.createNewFile();
+            FileWriter writer = new FileWriter(schedule);
+            writer.write("Match #,Red 1,Red 2,Blue 1,Blue 2,Red Score,Blue Score,Red Penalty,Blue Penalty,Red Points,Blue Points\n");
+            for (Match m : matches) {
+                writer.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", 
+                        m.getNumber(), m.getRed1().getName(), m.getRed2().getName(), 
+                        m.getBlue1().getName(), m.getBlue2().getName(),
+                        m.isScored() ? m.getRedScore() : "--", 
+                        m.isScored() ? m.getBlueScore() : "--",
+                        m.isScored() ? m.getRedPenalty() : "--",
+                        m.isScored() ? m.getBluePenalty() : "--",
+                        m.isScored() ? m.getRedPoints() : "--",
+                        m.isScored() ? m.getBluePoints() : "--"));
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException ex) {
+            Logger.getLogger(GenerateMatchesController.class.getName()).log(Level.SEVERE, null, ex);
+             Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Backup Error");
+            alert.setHeaderText("Couldn't Write Backup File");
+            alert.setContentText("An error occured while writing the competition backup file. "
+                    + "This competition is not being backed up. Make sure the file is not "
+                    + "in use by another process.");
+            alert.show();
+        }
     }
 }

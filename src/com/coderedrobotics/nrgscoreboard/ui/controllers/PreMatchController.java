@@ -116,7 +116,7 @@ public class PreMatchController implements Initializable {
                         final int index = i;
                         Platform.runLater(() -> {
                             rankDisplays[index % 10].setText("Rank " + String.valueOf(index + 1) + ": " + t.getName()
-                                    + "   (" + t.getWins() + "-" + t.getLoses() + "-"
+                                    + "   (" + t.getWins() + "-" + t.getLosses() + "-"
                                     + t.getTies() + ")   Total Score: " + t.getTotalScore());
                         });
                     }

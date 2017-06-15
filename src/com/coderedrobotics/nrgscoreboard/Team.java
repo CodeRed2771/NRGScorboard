@@ -18,6 +18,8 @@ public class Team {
     private int loses;
     private int ties;
     private int rank;
+    private int penalty;
+    private int points;
 
     public Team(String name) {
         this.name = name;
@@ -35,17 +37,23 @@ public class Team {
         wins = 0;
         loses = 0;
         ties = 0;
+        penalty = 0;
+        points = 0;
         matches.stream().forEach((m) -> {
             if (m.isRed(this)) {
                 totalScore += m.getRedScore();
                 wins += m.getRedScore() > m.getBlueScore() ? 1 : 0;
                 loses += m.getBlueScore() > m.getRedScore() ? 1 : 0;
                 ties += m.getBlueScore() == m.getRedScore() ? 1 : 0;
+                penalty += m.getRedPenalty();
+                points += m.getRedPoints();
             } else {
                 totalScore += m.getBlueScore();
                 wins += m.getBlueScore() > m.getRedScore() ? 1 : 0;
                 loses += m.getRedScore() > m.getBlueScore() ? 1 : 0;
                 ties += m.getBlueScore() == m.getRedScore() ? 1 : 0;
+                penalty += m.getBluePenalty();
+                points += m.getBluePoints();
             }
         });
     }
@@ -66,7 +74,7 @@ public class Team {
         return wins;
     }
 
-    public int getLoses() {
+    public int getLosses() {
         return loses;
     }
 
@@ -74,12 +82,12 @@ public class Team {
         return ties;
     }
 
-    public int getNumMatches() {
+    public int getNumberMatchesPlayed() {
         return matches.size();
     }
 
     public double getAverageScore() {
-        return ((double) (totalScore)) / getNumMatches();
+        return ((double) (totalScore)) / getNumberMatchesPlayed();
     }
     
     public int getRank() {
@@ -88,5 +96,13 @@ public class Team {
     
     public void setRank(int rank) {
         this.rank = rank;
+    }
+    
+    public int getTotalPenaltyPoints() {
+        return penalty;
+    }
+    
+    public int getTotalAlliancePoints() {
+        return points;
     }
 }
