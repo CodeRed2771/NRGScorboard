@@ -1,33 +1,18 @@
 package com.coderedrobotics.nrgscoreboard;
 
 import com.coderedrobotics.nrgscoreboard.ui.controllers.ControllerController;
-import com.coderedrobotics.nrgscoreboard.ui.controllers.EditNamesController;
-import com.coderedrobotics.nrgscoreboard.ui.controllers.GenerateMatchesController;
-import com.coderedrobotics.nrgscoreboard.ui.controllers.MatchController;
-import com.coderedrobotics.nrgscoreboard.ui.controllers.MatchesOverviewController;
-import com.coderedrobotics.nrgscoreboard.ui.controllers.PlayoffsControllerController;
-import com.coderedrobotics.nrgscoreboard.ui.controllers.PreMatchController;
-import com.coderedrobotics.nrgscoreboard.ui.controllers.ScoreController;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Scanner;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 /**
@@ -44,7 +29,7 @@ public class Main extends Application {
         Scene controllerScene = new Scene(controllerLayoutRoot);
         primaryStage.setScene(controllerScene);
         
-        primaryStage.setTitle("NRG Scoreboard Controller");
+        primaryStage.setTitle("NRG Controller");
 
         ((ControllerController) controllerLayout.getController()).init();
         

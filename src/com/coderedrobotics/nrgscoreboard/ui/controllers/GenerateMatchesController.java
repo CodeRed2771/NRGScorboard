@@ -1,7 +1,7 @@
 package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Schedule;
-import com.coderedrobotics.nrgscoreboard.Schedule.Match;
+import com.coderedrobotics.nrgscoreboard.Match;
 import com.coderedrobotics.nrgscoreboard.Team;
 import java.io.File;
 import java.io.FileWriter;
@@ -34,7 +34,7 @@ public class GenerateMatchesController implements Initializable {
 
     @FXML
     private Label eachTeamWillPlayLabel;
-    
+
     private Runnable callback;
 
     /**
@@ -49,7 +49,7 @@ public class GenerateMatchesController implements Initializable {
             recalculateNumMatchesPerTeam();
         });
     }
-    
+
     public void setCompletedCallback(Runnable callback) {
         this.callback = callback;
     }
@@ -75,24 +75,24 @@ public class GenerateMatchesController implements Initializable {
         for (int i = 0; i < teamNames.length; i++) {
             teams[i] = new Team(teamNames[i]);
         }
-        
+
         ArrayList<Team> usedTeams = new ArrayList<>();
         ArrayList<Team> usedMatchTeams = new ArrayList<>();
 
         Match[] matches = new Match[numMatches];
-        
+
         for (int i = 0; i < numMatches; i++) {
             Team red1 = getTeam(teams, usedTeams, usedMatchTeams);
             Team red2 = getTeam(teams, usedTeams, usedMatchTeams);
             Team blue1 = getTeam(teams, usedTeams, usedMatchTeams);
             Team blue2 = getTeam(teams, usedTeams, usedMatchTeams);
-            
+
             usedMatchTeams.clear();
-            
+
             matches[i] = new Match(red1, red2, blue1, blue2, i + 1);
         }
-        
-        Schedule.initialize(matches, teams);
+
+        Schedule.initialize(matches, teams, (int) Math.floor(((double) numMatches * 4d) / (double) teams.length));
         
         File schedule = new File("schedule.csv");
         try {
@@ -106,7 +106,7 @@ public class GenerateMatchesController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(GenerateMatchesController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         callback.run();
     }
 
@@ -114,7 +114,7 @@ public class GenerateMatchesController implements Initializable {
         if (usedTeams.size() == teams.length) {
             usedTeams.clear();
         }
-        
+
         Team selectedTeam;
         Random rand = new Random();
         do {

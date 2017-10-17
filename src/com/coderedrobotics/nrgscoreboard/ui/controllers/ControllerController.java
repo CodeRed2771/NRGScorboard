@@ -2,25 +2,22 @@ package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Main;
 import com.coderedrobotics.nrgscoreboard.Schedule;
-import com.coderedrobotics.nrgscoreboard.Schedule.Match;
+import com.coderedrobotics.nrgscoreboard.Match;
+import com.coderedrobotics.nrgscoreboard.Settings;
 import com.coderedrobotics.nrgscoreboard.Team;
+import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.EliminationsAdvancer;
+import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.ScheduleLoader;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -29,8 +26,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,15 +36,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -75,34 +68,32 @@ public class ControllerController implements Initializable {
     private MatchesOverviewController matchesOverviewController;
     private EditNamesController editNamesController;
     private RankingsController rankingsController;
+    private AddLateCompetitorController addLateCompetitorController;
+    private SettingsController settingsController;
     private int match = 0;
-    private Parent matchLayoutRoot, logoLayoutRoot, scoreLayoutRoot, preMatchLayoutRoot, 
+    private Parent matchLayoutRoot, logoLayoutRoot, scoreLayoutRoot, preMatchLayoutRoot,
             generateMatchesLayoutRoot, matchesOverviewLayoutRoot, editNamesLayoutRoot,
-            rankingsLayoutRoot;
+            rankingsLayoutRoot, addLateCompetitorLayoutRoot, settingsLayoutRoot;
     private Parent playoffsControllerLayoutRoot;
     private Parent currentLayoutRoot;
     private Parent previousLayoutRoot;
     private Stage projectorStage;
     private boolean inEliminations;
-    private Team sf1Winner1, sf1Winner2;
-    private Team sf2Winner1, sf2Winner2;
+    private Stack<Integer> previousEliminationMatchHistory;
+    private PlayoffsControllerController.PlayoffType playOffType;
     private Stage playoffsStage = null;
     private Stage generateMatchScheduleStage = null;
     private Stage matchesOverviewStage = null;
     private Stage editCompetitorNamesStage = null;
     private Stage rankingsStage = null;
+    private Stage addLateCompetitorStage = null;
+    private Stage settingsStage = null;
 
-    private boolean windowed = false;
-    private int width = 1024;
-    private int height = 768;
-    
-    private ObservableList aspectRatio1Items;
-    private ObservableList aspectRatio2Items;
-    private ObservableList aspectRatio3Items;
-    private ObservableList aspectRatio4Items;
-    
+    private ScheduleLoader scheduleLoader;
+    private EliminationsAdvancer eliminationsAdvancer;
+
     private Match[] matches;
-    
+
     @FXML
     private Label currentMatchLabel;
 
@@ -134,6 +125,9 @@ public class ControllerController implements Initializable {
     private Button applyScoringButton;
 
     @FXML
+    private Button viewMatchScheduleButton;
+
+    @FXML
     private Button previousMatchButton;
 
     @FXML
@@ -141,12 +135,6 @@ public class ControllerController implements Initializable {
 
     @FXML
     private Button competitionReportButton;
-
-    @FXML
-    private Button loadMatchScheduleButton;
-    
-    @FXML
-    private Button loadCompetitionBackupButton;
 
     @FXML
     private Button eliminationSelectionButton;
@@ -164,58 +152,35 @@ public class ControllerController implements Initializable {
     private RadioButton logoOnlyDisplayOption;
 
     @FXML
-    private ComboBox projectorLocationPicker;
-
-    @FXML
-    private ComboBox aspectRatioPicker;
-
-    @FXML
-    private ComboBox displayResolutionPicker;
-
-    @FXML
-    private CheckBox windowedModeOption;
-
-    @FXML
-    private Button disqualifyCompetitorButton;
-
-    @FXML
-    private Button addLateCompetitorButton;
+    private MenuItem generateMatchScheduleMenuItem;
     
     @FXML
-    private Button viewMatchScheduleButton;
-    
+    private MenuItem loadScheduleFromCSVMenuItem;
+
     @FXML
-    private Button editCompetitorNamesButton;
-    
+    private MenuItem loadFromCompetitonBackupMenuItem;
+
+    @FXML
+    private MenuItem addMoreMatchesMenuItem;
+
+    @FXML
+    private MenuItem editTeamNamesMenuItem;
+
+    @FXML
+    private MenuItem addLateCompetitorMenuItem;
+
+    @FXML
+    private MenuItem removeCompetitorMenuItem;
+
     @FXML
     private Label matchClock;
 
     public ControllerController() {
-        aspectRatio1Items = FXCollections.observableArrayList();
-        aspectRatio1Items.add("640 x 480");
-        aspectRatio1Items.add("800 x 600");
-        aspectRatio1Items.add("1024 x 768");
-        aspectRatio1Items.add("1152 x 864");
-        aspectRatio1Items.add("1600 x 1200");
-        aspectRatio2Items = FXCollections.observableArrayList();
-        aspectRatio2Items.add("1280 x 720");
-        aspectRatio2Items.add("1600 x 900");
-        aspectRatio2Items.add("1920 x 1080");
-        aspectRatio2Items.add("2560 x 1440");
-        aspectRatio3Items = FXCollections.observableArrayList();
-        aspectRatio3Items.add("1280 x 800");
-        aspectRatio3Items.add("1440 x 900");
-        aspectRatio3Items.add("1680 x 1050");
-        aspectRatio3Items.add("1920 x 1200");
-        aspectRatio3Items.add("2560 x 1600");
-        aspectRatio4Items = FXCollections.observableArrayList();
-        aspectRatio4Items.add("1280 x 768");
-        aspectRatio4Items.add("1280 x 1024");
-        aspectRatio4Items.add("1360 x 768");
-        aspectRatio4Items.add("1366 x 768");
-        aspectRatio4Items.add("1024 x 600");
+        scheduleLoader = new ScheduleLoader();
+        eliminationsAdvancer = new EliminationsAdvancer();
+        previousEliminationMatchHistory = new Stack<>();
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         redScoreField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -276,21 +241,33 @@ public class ControllerController implements Initializable {
         rankingsLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/Rankings.fxml"));
         rankingsLayoutRoot = (Parent) rankingsLayoutLoader.load();
         rankingsController = rankingsLayoutLoader.getController();
+
+        FXMLLoader addNewCompetitorLayoutLoader = new FXMLLoader();
+        addNewCompetitorLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/AddLateCompetitor.fxml"));
+        addLateCompetitorLayoutRoot = (Parent) addNewCompetitorLayoutLoader.load();
+        addLateCompetitorController = addNewCompetitorLayoutLoader.getController();        
         
+        FXMLLoader settingsLayoutLoader = new FXMLLoader();
+        settingsLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/Settings.fxml"));
+        settingsLayoutRoot = (Parent) settingsLayoutLoader.load();
+        settingsController = settingsLayoutLoader.getController();
+        settingsController.setSetupProjectorCallback(this::setupProjectorStage);
+
         setupProjectorStage();
         matchController.setControlDisplayTimeLabel(matchClock);
+        matchController.setMatchCompleteCallback(this::matchComplete);
     }
-    
+
     private void setupProjectorStage() {
         if (projectorStage != null) {
             projectorStage.hide();
             projectorStage = null;
         }
-        
+
         AnchorPane background = new AnchorPane();
         background.setStyle("-fx-background-color: #333;");
 
-        double scaleFactor = Math.min(height / 768d, width / 1024d);
+        double scaleFactor = Math.min(Settings.height / 768d, Settings.width / 1024d);
         matchLayoutRoot.setScaleY(scaleFactor);
         matchLayoutRoot.setScaleX(scaleFactor);
         logoLayoutRoot.setScaleY(scaleFactor);
@@ -299,35 +276,35 @@ public class ControllerController implements Initializable {
         scoreLayoutRoot.setScaleX(scaleFactor);
         preMatchLayoutRoot.setScaleY(scaleFactor);
         preMatchLayoutRoot.setScaleX(scaleFactor);
-        
+
         StackPane stackPane = new StackPane();
         stackPane.setStyle("-fx-background-color: #000");
-        stackPane.setAlignment(Pos.CENTER);    
+        stackPane.setAlignment(Pos.CENTER);
         stackPane.getChildren().add(matchLayoutRoot);
         stackPane.getChildren().add(logoLayoutRoot);
         stackPane.getChildren().add(scoreLayoutRoot);
         stackPane.getChildren().add(preMatchLayoutRoot);
-                
+
         if (currentLayoutRoot == null) {
             currentLayoutRoot = logoLayoutRoot;
         }
-        
+
         matchLayoutRoot.setOpacity(currentLayoutRoot == matchLayoutRoot ? 1 : 0);
         logoLayoutRoot.setOpacity(currentLayoutRoot == logoLayoutRoot ? 1 : 0);
         scoreLayoutRoot.setOpacity(currentLayoutRoot == scoreLayoutRoot ? 1 : 0);
         preMatchLayoutRoot.setOpacity(currentLayoutRoot == preMatchLayoutRoot ? 1 : 0);
 
-        Scene scene = new Scene(stackPane, width, height);
+        Scene scene = new Scene(stackPane, Settings.width, Settings.height);
         Stage stage = new Stage();
 
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] devices = g.getScreenDevices();
-        stage.setWidth(this.width);
-        stage.setHeight(this.height);
-        if (windowed) {
+        stage.setWidth(Settings.width);
+        stage.setHeight(Settings.height);
+        if (Settings.windowed) {
             stage.initStyle(StageStyle.DECORATED);
         } else {
-            int selection = projectorLocationPicker.getSelectionModel().getSelectedIndex();
+            int selection = Settings.projectorLocationIndex;
             int width;
             switch (selection) {
                 case 0:
@@ -346,151 +323,100 @@ public class ControllerController implements Initializable {
             stage.setY(0);
             stage.initStyle(StageStyle.UNDECORATED);
         }
-                
+
         stage.setTitle("NRG Scoreboard");
         stage.setScene(scene);
-        
+
         stage.show();
         projectorStage = stage;
+        settingsController.setProjectorStage(projectorStage);
     }
-    
+
+    private void finishUpInitialization() {
+        this.matches = Schedule.getInstance().getMatches();
+
+        startMatchButton.setDisable(false);
+//        abortMatchButton.setDisable(false);
+        applyScoringButton.setDisable(false);
+        previousMatchButton.setDisable(false);
+        competitionReportButton.setDisable(false);
+        nextMatchButton.setDisable(false);
+        preMatchDisplayOption.setDisable(false);
+        matchDetailsDisplayOption.setDisable(false);
+        logoOnlyDisplayOption.setDisable(false);
+        redScoreField.setDisable(false);
+        blueScoreField.setDisable(false);
+        eliminationSelectionButton.setDisable(false);
+        redPenaltyField.setDisable(false);
+        bluePenaltyField.setDisable(false);
+        viewMatchScheduleButton.setDisable(false);
+
+        generateMatchScheduleMenuItem.setDisable(true);
+        loadScheduleFromCSVMenuItem.setDisable(true);
+        loadFromCompetitonBackupMenuItem.setDisable(true);
+        addMoreMatchesMenuItem.setDisable(false);
+        editTeamNamesMenuItem.setDisable(false);
+        addLateCompetitorMenuItem.setDisable(false);
+        removeCompetitorMenuItem.setDisable(false);
+
+        setMatch(0);
+
+        if (matches[match].isScored()) {
+            matchScoreDisplayOption.setDisable(false);
+        }
+
+        currentLayoutRoot = logoLayoutRoot;
+    }
+
     @FXML
     private void startMatch(ActionEvent event) {
-        try {
-            InputStream audioSrc = Main.class.getResourceAsStream("/Start Auto_normalized.wav");
-            InputStream bufferedIn = new BufferedInputStream(audioSrc);
-            AudioInputStream start = AudioSystem.getAudioInputStream(bufferedIn);
-            Clip c = AudioSystem.getClip();
-            c.open(start);
-            c.start();
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException | IllegalArgumentException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        if (Settings.soundEnabled) {
+            try {
+                InputStream audioSrc = Main.class.getResourceAsStream("/Start Auto_normalized.wav");
+                InputStream bufferedIn = new BufferedInputStream(audioSrc);
+                AudioInputStream start = AudioSystem.getAudioInputStream(bufferedIn);
+                Clip c = AudioSystem.getClip();
+                c.open(start);
+                c.start();
+            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException | IllegalArgumentException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        startMatchButton.setDisable(true);
+        abortMatchButton.setDisable(false);
         matchController.startTimer();
     }
 
     @FXML
     private void abortMatch(ActionEvent event) {
-        try {
-            InputStream audioSrc = Main.class.getResourceAsStream("/fog-blast.wav");
-            InputStream bufferedIn = new BufferedInputStream(audioSrc);
-            AudioInputStream start = AudioSystem.getAudioInputStream(bufferedIn);
-            Clip c = AudioSystem.getClip();
-            c.open(start);
-            c.start();
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException | IllegalArgumentException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        if (Settings.soundEnabled) {
+            try {
+                InputStream audioSrc = Main.class.getResourceAsStream("/fog-blast.wav");
+                InputStream bufferedIn = new BufferedInputStream(audioSrc);
+                AudioInputStream start = AudioSystem.getAudioInputStream(bufferedIn);
+                Clip c = AudioSystem.getClip();
+                c.open(start);
+                c.start();
+            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException | IllegalArgumentException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        startMatchButton.setDisable(false);
+        abortMatchButton.setDisable(true);
         matchController.stopMatch();
     }
 
     @FXML
     private void loadMatchSchedule(ActionEvent event) {
-        BufferedReader read;
-        String line;
-        HashMap<String, Team> teamsandnames = new HashMap<>();
-        ArrayList<Team> allteams = new ArrayList<>();
-        try {
-            read = new BufferedReader(new FileReader("schedule.csv"));
-            ArrayList<Schedule.Match> matches = new ArrayList<>();
-            int mn = 1;
-            while ((line = read.readLine()) != null) {
-                String[] data = line.split(",");
-                Team[] teams = new Team[4];
-                for (int i = 0; i < 4; i++) {
-                    if (teamsandnames.containsKey(data[i])) {
-                        teams[i] = teamsandnames.get(data[i]);
-                    } else {
-                        Team t = new Team(data[i]);
-                        allteams.add(t);
-                        teamsandnames.put(data[i], t);
-                        teams[i] = t;
-                    }
-                }
-                Schedule.Match m = new Schedule.Match(teams[0], teams[1], teams[2], teams[3], mn);
-                mn++;
-                matches.add(m);
-            }
-            Schedule.initialize(matches.toArray(new Schedule.Match[0]), allteams.toArray(new Team[0]));
-            read.close();
-
+        if (scheduleLoader.loadMatchSchedule()) {
             finishUpInitialization();
-        } catch (IOException | ArrayIndexOutOfBoundsException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Invalid Match Schedule");
-            alert.setHeaderText("Couldn't Read/Find Schedule");
-            alert.setContentText("An error occured while reading the match schedule. "
-                    + "The file either was not found or is not formatted correctly. "
-                    + "Verify you have a CSV schdule file named \"schedule.csv\" in "
-                    + "the same directory as this application and try again.");
-
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            ex.printStackTrace(pw);
-            String exceptionText = sw.toString();
-            Label label = new Label("Exception Details: ");
-
-            TextArea textArea = new TextArea(exceptionText);
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
-
-            textArea.setMaxWidth(Double.MAX_VALUE);
-            textArea.setMaxHeight(Double.MAX_VALUE);
-            GridPane.setVgrow(textArea, Priority.ALWAYS);
-            GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-            GridPane expContent = new GridPane();
-            expContent.setMaxWidth(Double.MAX_VALUE);
-            expContent.add(label, 0, 0);
-            expContent.add(textArea, 0, 1);
-
-            alert.getDialogPane().setExpandableContent(expContent);
-            alert.show();
         }
     }
 
     @FXML
     private void loadCompetitionBackup(ActionEvent event) {
-        BufferedReader read;
-        String line;
-        HashMap<String, Team> teamsandnames = new HashMap<>();
-        ArrayList<Team> allteams = new ArrayList<>();
-        try {
-            read = new BufferedReader(new FileReader("competition_backup.csv"));
-            ArrayList<Schedule.Match> matches = new ArrayList<>();
-            read.readLine();
-            int mn = 1;
-            while ((line = read.readLine()) != null) {
-                System.out.println(line);
-                String[] data = line.split(",");
-                Team[] teams = new Team[4];
-                for (int i = 1; i < 5; i++) {
-                    if (teamsandnames.containsKey(data[i])) {
-                        teams[i - 1] = teamsandnames.get(data[i]);
-                    } else {
-                        Team t = new Team(data[i]);
-                        allteams.add(t);
-                        teamsandnames.put(data[i], t);
-                        teams[i - 1] = t;
-                    }
-                }
-                Schedule.Match m = new Schedule.Match(teams[0], teams[1], teams[2], teams[3], mn);
-                if (!data[5].equals("--")) {
-                    m.setScore(Integer.parseInt(data[5]), Integer.parseInt(data[6]),
-                            Integer.parseInt(data[9]), Integer.parseInt(data[7]),
-                            Integer.parseInt(data[10]), Integer.parseInt(data[8]));
-                }
-                mn++;
-                matches.add(m);
-            }
-            System.out.println("Read backup with: " + matches.size() + " matches and " + allteams.size() + " teams");
-            Schedule.initialize(matches.toArray(new Schedule.Match[0]), allteams.toArray(new Team[0]));
-            read.close();
-
+        if (scheduleLoader.loadCompetitionBackup()) {
             finishUpInitialization();
-            
             for (Match m : Schedule.getInstance().getMatches()) {
                 if (m.isScored()) {
                     m.getRed1().addMatch(m);
@@ -500,48 +426,24 @@ public class ControllerController implements Initializable {
                 }
             }
             rankTeams();
-        } catch (IOException | ArrayIndexOutOfBoundsException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Invalid Match Schedule");
-            alert.setHeaderText("Couldn't Read/Find Schedule");
-            alert.setContentText("An error occured while reading the backup file. "
-                    + "The file either was not found or is not formatted correctly. "
-                    + "Verify you have a CSV schdule file named \"competition_backup.csv\" in "
-                    + "the same directory as this application and try again.");
-
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            ex.printStackTrace(pw);
-            String exceptionText = sw.toString();
-            Label label = new Label("Exception Details: ");
-
-            TextArea textArea = new TextArea(exceptionText);
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
-
-            textArea.setMaxWidth(Double.MAX_VALUE);
-            textArea.setMaxHeight(Double.MAX_VALUE);
-            GridPane.setVgrow(textArea, Priority.ALWAYS);
-            GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-            GridPane expContent = new GridPane();
-            expContent.setMaxWidth(Double.MAX_VALUE);
-            expContent.add(label, 0, 0);
-            expContent.add(textArea, 0, 1);
-
-            alert.getDialogPane().setExpandableContent(expContent);
-            alert.show();
         }
     }
-    
+
     @FXML
     private void nextMatch(ActionEvent event) {
-        if (match == matches.length - 1) {
-            return;
+        if (inEliminations) {
+            int m = eliminationsAdvancer.getNextMatchAfter(playOffType, match);
+            if (m == match) {
+                return;
+            }
+            previousEliminationMatchHistory.push(match);
+            match = m;
+        } else {
+            if (match == matches.length - 1) {
+                return;
+            }
+            match++;
         }
-        match++;
         setMatch(match);
     }
 
@@ -550,7 +452,14 @@ public class ControllerController implements Initializable {
         if (match == 0) {
             return;
         }
-        match--;
+        if (inEliminations) {
+            if (previousEliminationMatchHistory.empty()) {
+                return;
+            }
+            match = previousEliminationMatchHistory.pop();
+        } else {
+            match--;
+        }
         setMatch(match);
     }
 
@@ -598,27 +507,7 @@ public class ControllerController implements Initializable {
             alert.show();
             return;
         }
-        Schedule.Match m = matches[match];
-        if (inEliminations) {
-            if (match == 0) {
-                if (red > blue) {
-                    sf1Winner1 = m.getRed1();
-                    sf1Winner2 = m.getRed2();
-                } else {
-                    sf1Winner1 = m.getBlue1();
-                    sf1Winner2 = m.getBlue2();
-                }
-            } else if (match == 1) {
-                if (red > blue) {
-                    sf2Winner1 = m.getRed1();
-                    sf2Winner2 = m.getRed2();
-                } else {
-                    sf2Winner1 = m.getBlue1();
-                    sf2Winner2 = m.getBlue2();
-                }
-                matches = new Match[]{matches[0], matches[1], new Match(sf1Winner1, sf1Winner2, sf2Winner1, sf2Winner2, 3)};
-            }
-        }
+        Match m = matches[match];
         m.setScore(red, blue, redPoints, redPenalty, bluePoints, bluePenalty);
         m.getRed1().addMatch(m);
         m.getRed2().addMatch(m);
@@ -633,12 +522,15 @@ public class ControllerController implements Initializable {
             redPenaltyField.setText("");
             bluePenaltyField.setText("");
         });
-        
+
+        if (inEliminations) {
+            matches = eliminationsAdvancer.handleEliminationAdvancement(matches, m, match, playOffType);
+        }
+
         matchesOverviewController.refresh();
-        writeCompetitionBackup();
+        scheduleLoader.writeCompetitionBackup();
     }
 
-    @FXML
     private void recalculateTotalScores() {
         int bluePoints, redPoints, bluePenalty, redPenalty;
         try {
@@ -661,29 +553,7 @@ public class ControllerController implements Initializable {
     }
 
     @FXML
-    private void projectorLocationAction(ActionEvent event) {
-        int selection = projectorLocationPicker.getSelectionModel().getSelectedIndex();
-        GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] devices = g.getScreenDevices();
-        int width;
-        switch (selection) {
-            case 0:
-            case 1:
-                projectorStage.setX(0);
-                break;
-            case 2:
-                width = devices[1].getDisplayMode().getWidth();
-                projectorStage.setX(-width);
-                break;
-            case 3:
-                width = devices[0].getDisplayMode().getWidth();
-                projectorStage.setX(width);
-                break;
-        }
-    }
-
-    @FXML
-    private void competitionReport(ActionEvent event) {        
+    private void competitionReport(ActionEvent event) {
         if (rankingsStage != null) {
             rankingsStage.show();
             rankingsController.refresh();
@@ -750,11 +620,14 @@ public class ControllerController implements Initializable {
         playoffsStage = stage;
     }
 
-    void enableEliminationsMode(Match sf1, Match sf2) {
-        matches = new Match[]{sf1, sf2};
+    void enableEliminationsMode(PlayoffsControllerController.PlayoffType playOffType, Match... matches) {
+        this.matches = matches;
         inEliminations = true;
+        this.playOffType = playOffType;
         setMatch(0);
         eliminationSelectionButton.setDisable(true);
+        Schedule.getInstance().setPlayoffMatches(matches);
+        previousEliminationMatchHistory.clear();
     }
 
     private void fadeLayout(Parent newLayout) {
@@ -779,24 +652,43 @@ public class ControllerController implements Initializable {
 
     private void setMatch(int number) {
         match = number;
-        Schedule.Match m = matches[match];
+        Schedule.getInstance().setCurrentMatch(match);
+        Match m = matches[match];
         Platform.runLater(() -> {
             matchScoreDisplayOption.setDisable(!m.isScored());
             redScoreField.setText(m.isScored() ? String.valueOf(m.getRedPoints()) : "");
             blueScoreField.setText(m.isScored() ? String.valueOf(m.getBluePoints()) : "");
             redPenaltyField.setText(m.isScored() ? String.valueOf(m.getRedPenalty()) : "");
             bluePenaltyField.setText(m.isScored() ? String.valueOf(m.getBluePenalty()) : "");
-            currentMatchLabel.setText("Current Match: " + (match + 1));
+            if (m.isTieBreaker()) {
+                if (null != m.getType()) {
+                    switch (m.getType()) {
+                        case QUARTERFINAL:
+                            currentMatchLabel.setText("Current Match: QF " + m.getNumberInSeries() + " Tiebreaker");
+                            break;
+                        case SEMIFINAL:
+                            currentMatchLabel.setText("Current Match: SF " + m.getNumberInSeries() + " Tiebreaker");
+                            break;
+                        case FINAL:
+                            currentMatchLabel.setText("Current Match: Finals Tiebreaker");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else if (m.getType() == Match.MatchType.NORMAL) {
+                currentMatchLabel.setText("Current Match: " + m.getNumber());
+            } else if (m.getType() == Match.MatchType.QUARTERFINAL) {
+                currentMatchLabel.setText("Current Match: Quarterfinal " + m.getNumberInSeries() + " of " + m.getTotalInSeries());
+            } else if (m.getType() == Match.MatchType.SEMIFINAL) {
+                currentMatchLabel.setText("Current Match: Semifinal " + m.getNumberInSeries() + " of " + m.getTotalInSeries());
+            } else if (m.getType() == Match.MatchType.FINAL) {
+                currentMatchLabel.setText("Current Match: Final " + m.getNumberInSeries() + " of " + m.getTotalInSeries());
+            }
             matchController.updateTeamDisplays(m);
             preMatchController.updateTeamDisplays(matches[match]);
             scoreController.updateDisplay(m);
         });
-    }
-
-    @FXML
-    private void toggleWindowedMode(ActionEvent event) {
-        windowed = !windowed;
-        setupProjectorStage();        
     }
 
     @FXML
@@ -812,7 +704,7 @@ public class ControllerController implements Initializable {
         stage.show();
         generateMatchScheduleStage = stage;
     }
-    
+
     @FXML
     private void editCompetitorNames(ActionEvent event) {
         if (editCompetitorNamesStage != null) {
@@ -825,46 +717,13 @@ public class ControllerController implements Initializable {
         editNamesController.init();
         editNamesController.setCompletedCallback(() -> {
             matchesOverviewController.refresh();
-            writeCompetitionBackup();
+            scheduleLoader.writeCompetitionBackup();
         });
         stage.show();
         editCompetitorNamesStage = stage;
         matchesOverviewController.refresh();
     }
 
-    private void finishUpInitialization() {
-        this.matches = Schedule.getInstance().getMatches();
-
-        startMatchButton.setDisable(false);
-        abortMatchButton.setDisable(false);
-        applyScoringButton.setDisable(false);
-        previousMatchButton.setDisable(false);
-        competitionReportButton.setDisable(false);
-        nextMatchButton.setDisable(false);
-        preMatchDisplayOption.setDisable(false);
-        matchDetailsDisplayOption.setDisable(false);
-        logoOnlyDisplayOption.setDisable(false);
-        redScoreField.setDisable(false);
-        blueScoreField.setDisable(false);
-        eliminationSelectionButton.setDisable(false);
-        loadMatchScheduleButton.setDisable(true);
-        loadCompetitionBackupButton.setDisable(true);
-        redPenaltyField.setDisable(false);
-        bluePenaltyField.setDisable(false);
-        disqualifyCompetitorButton.setDisable(false);
-        addLateCompetitorButton.setDisable(false);
-        viewMatchScheduleButton.setDisable(false);
-        editCompetitorNamesButton.setDisable(false);
-        
-        setMatch(0);
-        
-        if (matches[match].isScored()) {
-            matchScoreDisplayOption.setDisable(false);
-        }
-
-        currentLayoutRoot = logoLayoutRoot;
-    }
-    
     @FXML
     private void viewMatchOverview(ActionEvent event) {
         if (matchesOverviewStage != null) {
@@ -880,51 +739,35 @@ public class ControllerController implements Initializable {
         stage.show();
         matchesOverviewStage = stage;
     }
-    
+
     @FXML
-    private void aspectRatioChanged(ActionEvent event) {
-        int selection = aspectRatioPicker.getSelectionModel().getSelectedIndex();
-        switch (selection) {
-            case 0:
-                displayResolutionPicker.setItems(aspectRatio1Items);
-                break;
-            case 1:
-                displayResolutionPicker.setItems(aspectRatio2Items);
-                break;
-            case 2:
-                displayResolutionPicker.setItems(aspectRatio3Items);
-                break;
-            default:
-                displayResolutionPicker.setItems(aspectRatio4Items);
-                break;
+    private void addLateCompetitor(ActionEvent event) {
+        if (addLateCompetitorStage != null) {
+            addLateCompetitorStage.show();
+            return;
         }
+        Stage stage = new Stage();
+        stage.setTitle("Add Late Competitor");
+        stage.setScene(new Scene(addLateCompetitorLayoutRoot));
+        addLateCompetitorController.setCompletedCallback(stage::hide);
+        stage.show();
+        addLateCompetitorStage = stage;
     }
-    
-    @FXML
-    private void projectorResolutionChanged(ActionEvent event) {
-        String resolution = ((ObservableList<String>) displayResolutionPicker.getItems()).get(displayResolutionPicker.getSelectionModel().getSelectedIndex());
-        String[] items = resolution.split("x");
-        items[0] = items[0].trim();
-        items[1] = items[1].trim();
-        width = Integer.parseInt(items[0]);
-        height = Integer.parseInt(items[1]);
-        setupProjectorStage();
-    }
-    
+
     private void overviewEditCallback(Match m) {
         matchScoreDisplayOption.setDisable(!matches[match].isScored());
         if (matches[match].isScored()) {
             scoreController.updateDisplay(matches[match]);
         }
-        writeCompetitionBackup();
-        
+        scheduleLoader.writeCompetitionBackup();
+
         m.getRed1().addMatch(m);
         m.getRed2().addMatch(m);
         m.getBlue1().addMatch(m);
         m.getBlue2().addMatch(m);
         rankTeams();
     }
-    
+
     private void rankTeams() {
         TreeMap<Integer, Integer> map = new TreeMap<>();
         Team[] teams = Schedule.getInstance().getTeams();
@@ -944,34 +787,61 @@ public class ControllerController implements Initializable {
         }
     }
 
-    private void writeCompetitionBackup() {
-        File schedule = new File("competition_backup.csv");
-        try {
-            schedule.createNewFile();
-            FileWriter writer = new FileWriter(schedule);
-            writer.write("Match #,Red 1,Red 2,Blue 1,Blue 2,Red Score,Blue Score,Red Penalty,Blue Penalty,Red Points,Blue Points\n");
-            for (Match m : matches) {
-                writer.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", 
-                        m.getNumber(), m.getRed1().getName(), m.getRed2().getName(), 
-                        m.getBlue1().getName(), m.getBlue2().getName(),
-                        m.isScored() ? m.getRedScore() : "--", 
-                        m.isScored() ? m.getBlueScore() : "--",
-                        m.isScored() ? m.getRedPenalty() : "--",
-                        m.isScored() ? m.getBluePenalty() : "--",
-                        m.isScored() ? m.getRedPoints() : "--",
-                        m.isScored() ? m.getBluePoints() : "--"));
-            }
-            writer.flush();
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(GenerateMatchesController.class.getName()).log(Level.SEVERE, null, ex);
-             Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Backup Error");
-            alert.setHeaderText("Couldn't Write Backup File");
-            alert.setContentText("An error occured while writing the competition backup file. "
-                    + "This competition is not being backed up. Make sure the file is not "
-                    + "in use by another process.");
-            alert.show();
+    @FXML
+    private void openSettings(ActionEvent event) {
+        if (settingsStage != null) {
+            settingsStage.show();
+            return;
         }
+        Stage stage = new Stage();
+        stage.setTitle("Settings");
+        stage.setScene(new Scene(settingsLayoutRoot));
+//        generateMatchesController.setCompletedCallback(this::finishUpInitialization);
+        stage.show();
+        settingsStage = stage;
+    }
+
+    @FXML
+    private void closeProgram(ActionEvent event) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Close Confirmation");
+        alert.setHeaderText("Close Scoreboard Software");
+        alert.setContentText("Closing the controller window will stop the display software. "
+                + "Match scores stored in the progam will not be saved. "
+                + "Are you sure you want to close?");
+        ButtonType yesButton = new ButtonType("Close Application");
+        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(yesButton, cancelButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == yesButton) {
+            Platform.exit();
+            System.exit(0);
+        } else {
+            event.consume();
+        }
+    }
+
+    private void matchComplete() {
+        startMatchButton.setDisable(false);
+        abortMatchButton.setDisable(true);
+    }
+    
+    @FXML
+    private void addMoreMatchesToSchedule(ActionEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Not Implemented");
+        alert.setHeaderText(null);
+        alert.setContentText("This feature doesn't work yet. Sorry!");
+        alert.show();
+    }
+    
+    @FXML
+    private void removeCompetitor(ActionEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Not Implemented");
+        alert.setHeaderText(null);
+        alert.setContentText("This feature doesn't work yet. Sorry!");
+        alert.show();
     }
 }

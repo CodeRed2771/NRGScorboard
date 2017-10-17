@@ -1,7 +1,7 @@
 package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Schedule;
-import com.coderedrobotics.nrgscoreboard.Schedule.Match;
+import com.coderedrobotics.nrgscoreboard.Match;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -131,6 +131,9 @@ public class MatchesOverviewController implements Initializable {
     public void refresh() {
         table.getItems().clear();
         table.getItems().addAll(Schedule.getInstance().getMatches());
+        if (Schedule.getInstance().getPlayoffMatches() != null) {
+            table.getItems().addAll(Schedule.getInstance().getPlayoffMatches());
+        }
     }
 
 }

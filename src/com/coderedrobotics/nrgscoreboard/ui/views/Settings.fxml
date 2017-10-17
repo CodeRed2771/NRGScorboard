@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="433.0" prefWidth="294.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.SettingsController">
+   <children>
+      <Pane layoutX="14.0" layoutY="236.0" prefHeight="143.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
+         <children>
+            <ComboBox fx:id="projectorLocationPicker" layoutX="118.0" layoutY="43.0" onAction="#projectorLocationAction" prefHeight="25.0" prefWidth="134.0" promptText="&lt;Select a Location&gt;" value="Secondary Monitor - Right">
+               <items>
+                  <FXCollections fx:factory="observableArrayList">
+                     <String fx:value="Primary Monitor - Left" />
+                     <String fx:value="Primary Monitor - Right" />
+                     <String fx:value="Secondary Monitor - Left" />
+                     <String fx:value="Secondary Monitor - Right" />
+                  </FXCollections>
+               </items>
+            </ComboBox>
+            <Label layoutX="15.0" layoutY="47.0" text="Projector Location:" />
+            <CheckBox fx:id="windowedModeOption" layoutX="14.0" layoutY="74.0" mnemonicParsing="false" onAction="#toggleWindowedMode" text="Windowed Mode" />
+            <ComboBox fx:id="aspectRatioPicker" layoutX="14.0" layoutY="101.0" onAction="#aspectRatioChanged" prefHeight="25.0" prefWidth="64.0" value="4:3">
+               <items>
+                  <FXCollections fx:factory="observableArrayList">
+                     <String fx:value="4:3" />
+                     <String fx:value="16:9" />
+                     <String fx:value="16:10" />
+                     <String fx:value="Other" />
+                  </FXCollections>
+               </items>
+            </ComboBox>
+            <ComboBox fx:id="displayResolutionPicker" layoutX="86.0" layoutY="101.0" onAction="#projectorResolutionChanged" prefHeight="25.0" prefWidth="166.0" promptText="&lt;Screen Resolution&gt;">
+               <items>
+                  <FXCollections fx:factory="observableArrayList">
+                     <String fx:value="640 x 480" />
+                     <String fx:value="800 x 600" />
+                     <String fx:value="1024 x 768" />
+                     <String fx:value="1152 x 864" />
+                     <String fx:value="1600 x 1200" />
+                  </FXCollections>
+               </items>
+            </ComboBox>
+            <Label layoutX="14.0" layoutY="14.0" text="Display Setup">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Pane layoutX="14.0" layoutY="15.0" prefHeight="249.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+         <children>
+            <Label layoutX="14.0" layoutY="14.0" text="Match Setup">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <CheckBox fx:id="enableSounds" layoutX="14.0" layoutY="42.0" mnemonicParsing="false" text="Enable Sounds" />
+            <Label layoutX="14.0" layoutY="86.0" text="Total Match Length (seconds):" />
+            <TextField fx:id="matchLengthField" layoutX="11.0" layoutY="111.0" prefHeight="25.0" prefWidth="144.0" />
+            <Label layoutX="15.0" layoutY="178.0" text="Endgame is the last ___ seconds:" />
+            <TextField fx:id="endGameLengthField" layoutX="12.0" layoutY="203.0" prefHeight="25.0" prefWidth="144.0" />
+            <CheckBox fx:id="enableEndGame" layoutX="14.0" layoutY="150.0" mnemonicParsing="false" text="Enable End Game" />
+            <Separator layoutX="13.0" layoutY="72.0" prefHeight="3.0" prefWidth="234.0" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

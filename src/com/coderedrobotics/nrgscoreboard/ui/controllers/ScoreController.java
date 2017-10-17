@@ -1,6 +1,7 @@
 package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
-import com.coderedrobotics.nrgscoreboard.Schedule.Match;
+import com.coderedrobotics.nrgscoreboard.Match;
+import com.coderedrobotics.nrgscoreboard.Schedule;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -14,7 +15,7 @@ import javafx.scene.text.Font;
  * @author Michael
  */
 public class ScoreController implements Initializable {
-    
+
     @FXML
     private Label red1;
     @FXML
@@ -53,9 +54,35 @@ public class ScoreController implements Initializable {
     private Label redWinsLabel;
     @FXML
     private Label blueWinsLabel;
+    @FXML
+    private StackPane redNewHighScore;
+    @FXML
+    private StackPane blueNewHighScore;
 
     public void updateDisplay(Match match) {
-        this.match.setText("Match " + match.getNumber());
+         if (match.isTieBreaker()) {
+            if (null != match.getType()) switch (match.getType()) {
+                case QUARTERFINAL:
+                    this.match.setText("QF " + match.getNumberInSeries() + " Tiebreaker");
+                    break;
+                case SEMIFINAL:
+                    this.match.setText("SF " + match.getNumberInSeries() + " Tiebreaker");
+                    break;
+                case FINAL:
+                    this.match.setText("Finals Tiebreaker");
+                    break;
+                default:
+                    break;
+            }
+        } else if (match.getType() == Match.MatchType.NORMAL) {
+            this.match.setText("Match " + match.getNumber());
+        } else if (match.getType() == Match.MatchType.QUARTERFINAL) {
+            this.match.setText("Quarterfinal " + match.getNumberInSeries() + " of " + match.getTotalInSeries());
+        } else if (match.getType() == Match.MatchType.SEMIFINAL) {
+            this.match.setText("Semifinal " + match.getNumberInSeries() + " of " + match.getTotalInSeries());
+        } else if (match.getType() == Match.MatchType.FINAL) {
+            this.match.setText("Final " + match.getNumberInSeries() + " of " + match.getTotalInSeries());
+        }
         this.red1.setText(match.getRed1().getName());
         this.red2.setText(match.getRed2().getName());
         this.blue1.setText(match.getBlue1().getName());
@@ -91,11 +118,26 @@ public class ScoreController implements Initializable {
             redWinsLabel.setText("Tie!");
             blueWinsLabel.setText("Tie!");
         }
+        int highScore = Schedule.getInstance().calculateHighScore(match);
+        if (match.getRedScore() > highScore && match.getRedScore() > match.getBlueScore()) {
+            redNewHighScore.setVisible(true);
+        } else {
+            redNewHighScore.setVisible(false);
+        }
+        if (match.getBlueScore() > highScore && match.getBlueScore() > match.getRedScore()) {
+            blueNewHighScore.setVisible(true);
+        } else {
+            blueNewHighScore.setVisible(false);
+        }
+        if (match.getBlueScore() > highScore && match.getRedScore() == match.getBlueScore()) {
+            blueNewHighScore.setVisible(true);
+            redNewHighScore.setVisible(true);
+        }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // TODO
     }
-    
+
 }

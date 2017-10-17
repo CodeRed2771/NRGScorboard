@@ -1,6 +1,6 @@
 package com.coderedrobotics.nrgscoreboard;
 
-import com.coderedrobotics.nrgscoreboard.Schedule.Match;
+import com.coderedrobotics.nrgscoreboard.Match;
 import java.util.ArrayList;
 
 /**

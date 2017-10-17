@@ -6,17 +6,22 @@ package com.coderedrobotics.nrgscoreboard;
  */
 public class Schedule {
 
-    Match[] matches;
+    private Match[] matches;
+    private Match[] playoffMatches;
     private static Schedule instance;
-    Team[] teams;
-
+    private Team[] teams;
+    
+    private int matchesPerTeam;
+    private int currentMatch;
+    
     private Schedule(Match[] matches, Team[] teams) {
         this.matches = matches;
         this.teams = teams;
     }
 
-    public static void initialize(Match[] matches, Team[] teams) {
+    public static void initialize(Match[] matches, Team[] teams, int matchesPerTeam) {
         instance = new Schedule(matches, teams);
+        instance.matchesPerTeam = matchesPerTeam;
     }
 
     public static Schedule getInstance() {
@@ -35,114 +40,68 @@ public class Schedule {
         return teams;
     }
 
-    public static class Match {
-
-        Team red1, red2, blue1, blue2;
-        int number;
-        int redPoints, redPenalty;
-        int bluePoints, bluePenalty;
-        int redScore = 0;
-        int blueScore = 0;
-        boolean scored;
-        private boolean setRedPoints, setRedPenalty, setBluePoints, setBluePenalty;
-
-        public Match(Team red1, Team red2, Team blue1, Team blue2, int number) {
-            this.red1 = red1;
-            this.red2 = red2;
-            this.blue1 = blue1;
-            this.blue2 = blue2;
-            this.number = number;
+    public int getMatchesPlayedPerTeam() {
+        return matchesPerTeam;
+    }
+    
+    public int getNumMatches() {
+        return matches.length;
+    }
+    
+    public int getCurrentMatch() {
+        return currentMatch;
+    }
+    
+    public void setCurrentMatch(int currentMatch) {
+        this.currentMatch = currentMatch;
+    }
+    
+    public Match replaceMatch(int matchNum, Match newMatch) {
+        Match oldMatch = matches[matchNum];
+        matches[matchNum] = newMatch;
+        return oldMatch;
+    }
+    
+    public void addMatchToEnd(Match match) {
+        Match[] matches = new Match[this.matches.length + 1];
+        for (int i = 0; i < this.matches.length; i++ ){
+            matches[i] = this.matches[i];
         }
-       
-        public Team getRed1() {
-            return red1;
+        matches[this.matches.length] = match;
+        this.matches = matches;
+    }
+    
+    public void addTeam(Team team) {
+        Team[] teams = new Team[this.teams.length + 1];
+        for (int i = 0; i < this.teams.length; i++ ){
+            teams[i] = this.teams[i];
         }
+        teams[this.teams.length] = team;
+        this.teams = teams;
+    }
 
-        public Team getRed2() {
-            return red2;
-        }
+    public Match[] getPlayoffMatches() {
+        return playoffMatches;
+    }
 
-        public Team getBlue1() {
-            return blue1;
-        }
-
-        public Team getBlue2() {
-            return blue2;
-        }
-
-        public int getNumber() {
-            return number;
-        }
-
-        public void setScore(int red, int blue, int redPoints, int redPenalty,
-                int bluePoints, int bluePenalty) {
-            this.redScore = red;
-            this.blueScore = blue;
-            this.redPoints = redPoints;
-            this.redPenalty = redPenalty;
-            this.bluePoints = bluePoints;
-            this.bluePenalty = bluePenalty;
-            scored = true;
-        }
-
-        public int getRedScore() {
-            return redScore;
-        }
-
-        public int getBlueScore() {
-            return blueScore;
-        }
-
-        public boolean isScored() {
-            return scored;
-        }
-
-        public int getRedPenalty() {
-            return redPenalty;
-        }
-
-        public void setRedPenalty(int redPenalty) {
-            this.redPenalty = redPenalty;
-            setRedPenalty = true;
-        }
-
-        public int getBluePoints() {
-            return bluePoints;
-        }
-
-        public void setBluePoints(int bluePoints) {
-            this.bluePoints = bluePoints;
-            setBluePoints = true;
-        }
-
-        public int getBluePenalty() {
-            return bluePenalty;
-        }
-
-        public void setBluePenalty(int bluePenalty) {
-            this.bluePenalty = bluePenalty;
-            setBluePenalty = true;
-        }
-
-        public int getRedPoints() {
-            return redPoints;
-        }
-
-        public void setRedPoints(int redPoints) {
-            this.redPoints = redPoints;
-            setRedPoints = true;
-        }
-        
-        public void rescore() {
-            if (scored || (setRedPoints && setBluePoints && setRedPenalty && setBluePenalty)) {
-                redScore = bluePenalty + redPoints;
-                blueScore = redPenalty + bluePoints;
-                scored = true;
+    public void setPlayoffMatches(Match[] playoffMatches) {
+        this.playoffMatches = playoffMatches;
+    }
+    
+    public int calculateHighScore(Match exclude) {
+        int score = Integer.MIN_VALUE;
+        for (Match m : matches) {
+            if (m == exclude) {
+                continue;
+            }
+            
+            if (m.isScored() && m.getRedScore() > score) {
+                score = m.getRedScore();
+            }
+            if (m.isScored() && m.getBlueScore() > score) {
+                score = m.getBlueScore();
             }
         }
-        
-        public boolean isRed(Team t) {
-            return t == red1 || t == red2;
-        }
+        return score;
     }
 }

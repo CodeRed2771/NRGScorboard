@@ -1,5 +1,6 @@
 package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
+import com.coderedrobotics.nrgscoreboard.Match;
 import com.coderedrobotics.nrgscoreboard.Schedule;
 import com.coderedrobotics.nrgscoreboard.Team;
 import java.net.URL;
@@ -61,7 +62,7 @@ public class PreMatchController implements Initializable {
         // TODO
     }
 
-    public void updateTeamDisplays(Schedule.Match m) {
+    public void updateTeamDisplays(Match m) {
         nextMatch.setText("Next Match: " + m.getNumber());
         this.red1.setText(m.getRed1().getName());
         this.red2.setText(m.getRed2().getName());
