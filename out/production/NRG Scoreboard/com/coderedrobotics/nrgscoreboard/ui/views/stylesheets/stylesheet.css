@@ -1,0 +1,49 @@
+/* 
+    Created on : Sep 14, 2017, 1:28:40 PM
+    Author     : Michael
+*/
+
+.button {
+    -fx-padding: 15 25;
+    -fx-background-color: lightgray;
+}
+
+.button:hover {
+    -fx-background-color: #ddd;
+}
+
+.button:pressed {
+    -fx-background-color: #eee;
+}
+
+.green_button {
+    -fx-padding: 15 25;
+    -fx-background-color: green;
+}
+
+.green_button:hover {
+    -fx-background-color: #00a200;
+}
+
+.green_button:pressed {
+    -fx-background-color: #00bd00;
+}
+
+.red_button {
+    -fx-padding: 15 25;
+    -fx-background-color: red;
+}
+
+.red_button:hover {
+    -fx-background-color: #e00000;
+}
+
+.red_button:pressed {
+    -fx-background-color: #ad0000;
+}
+
+
+.text-field {
+    -fx-prompt-text-fill: #666666;
+    -fx-padding: 10;
+}

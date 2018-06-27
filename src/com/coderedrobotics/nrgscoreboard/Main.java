@@ -23,23 +23,23 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        MqttConnection.getInstance();
+        
         FXMLLoader controllerLayout = new FXMLLoader();
         controllerLayout.setLocation(getClass().getResource("ui/views/Controller.fxml"));
         Parent controllerLayoutRoot = (Parent) controllerLayout.load();
         Scene controllerScene = new Scene(controllerLayoutRoot);
         primaryStage.setScene(controllerScene);
-        
+
         primaryStage.setTitle("NRG Controller");
 
         ((ControllerController) controllerLayout.getController()).init();
-        
+
 //        ((ControllerController) controllerLayout.getController()).init(matchLayoutRoot,
 //                logoLayoutRoot, scoreLayoutRoot, preMatchLayoutRoot, playoffsControllerLayoutRoot, 
 //                generateMatchesLayoutRoot, matchesOverviewLayoutRoot, editNamesLayoutRoot, matchController, scoreController, 
 //                preMatchController, playoffsController, generateMatchesController, matchesOverviewController, editNamesController, stage);
-
 //        stage.show();
-        
         primaryStage.setOnCloseRequest((WindowEvent event) -> {
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Close Confirmation");

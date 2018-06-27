@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="265.0" prefWidth="409.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.AddLateCompetitorController">
+   <children>
+      <Label layoutX="14.0" layoutY="14.0" text="Competitor Name:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="17.0" />
+      <TextField fx:id="competitorNameField" layoutX="124.0" layoutY="10.0" AnchorPane.topAnchor="14.0" />
+      <VBox layoutX="16.0" layoutY="88.0">
+         <children>
+            <Label text="Note: The late competitor will play the same number of matches as " />
+            <Label prefHeight="17.0" prefWidth="366.0" text="the competitors currently in the schedule. This may require creating" />
+            <Label text="a surrogate match, OR making competitors play an uneven number" />
+            <Label text="of matches. Using the surrogate option is highly recommended." />
+            <Label text="Wins/Loses for teams acting as a surrogate will not count for or" />
+            <Label text="against that team. You will be notified after clicking &quot;Add Competitor&quot;" />
+            <Label text="if any surrogates are required." />
+         </children>
+      </VBox>
+      <Button fx:id="addCompetitorButton" layoutX="11.0" layoutY="196.0" mnemonicParsing="false" onAction="#addCompetitor" prefHeight="25.0" prefWidth="388.0" text="Add Competitor" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+      <CheckBox fx:id="useSurrogates" layoutX="14.0" layoutY="55.0" mnemonicParsing="false" selected="true" text="Use Surrogates" />
+   </children>
+</AnchorPane>

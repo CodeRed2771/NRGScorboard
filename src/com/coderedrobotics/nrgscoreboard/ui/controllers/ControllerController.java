@@ -3,9 +3,11 @@ package com.coderedrobotics.nrgscoreboard.ui.controllers;
 import com.coderedrobotics.nrgscoreboard.Main;
 import com.coderedrobotics.nrgscoreboard.Schedule;
 import com.coderedrobotics.nrgscoreboard.Match;
+import com.coderedrobotics.nrgscoreboard.MqttConnection;
 import com.coderedrobotics.nrgscoreboard.Settings;
 import com.coderedrobotics.nrgscoreboard.Team;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.EliminationsAdvancer;
+import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.IndicatorColorManager;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.ScheduleLoader;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -44,6 +46,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -175,6 +178,43 @@ public class ControllerController implements Initializable {
     @FXML
     private Label matchClock;
 
+    @FXML
+    private RadioButton field1;
+    
+    @FXML
+    private RadioButton field2;
+    
+    @FXML
+    private Circle field1FCSIndicator;
+    
+    @FXML
+    private Circle field1Red1Indicator;
+    
+    @FXML
+    private Circle field1Red2Indicator;
+    
+    @FXML
+    private Circle field1Blue1Indicator;
+    
+    @FXML
+    private Circle field1Blue2Indicator;
+    
+    @FXML
+    private Circle field2FCSIndicator;
+    
+    @FXML
+    private Circle field2Red1Indicator;
+    
+    @FXML
+    private Circle field2Red2Indicator;
+    
+    @FXML
+    private Circle field2Blue1Indicator;
+    
+    @FXML
+    private Circle field2Blue2Indicator;
+    
+    
     public ControllerController() {
         scheduleLoader = new ScheduleLoader();
         eliminationsAdvancer = new EliminationsAdvancer();
@@ -195,6 +235,20 @@ public class ControllerController implements Initializable {
         bluePenaltyField.textProperty().addListener((observable, oldValue, newValue) -> {
             recalculateTotalScores();
         });
+        
+        IndicatorColorManager colorManager = new IndicatorColorManager();
+        MqttConnection.getInstance().setColorManager(colorManager);
+        
+        field1FCSIndicator.fillProperty().bind(colorManager.field1FCS);
+        field1Red1Indicator.fillProperty().bind(colorManager.field1Red1);
+        field1Red2Indicator.fillProperty().bind(colorManager.field1Red2);
+        field1Blue1Indicator.fillProperty().bind(colorManager.field1Blue1);
+        field1Blue2Indicator.fillProperty().bind(colorManager.field1Blue2);
+        field2FCSIndicator.fillProperty().bind(colorManager.field2FCS);
+        field2Red1Indicator.fillProperty().bind(colorManager.field2Red1);
+        field2Red2Indicator.fillProperty().bind(colorManager.field2Red2);
+        field2Blue1Indicator.fillProperty().bind(colorManager.field2Blue1);
+        field2Blue2Indicator.fillProperty().bind(colorManager.field2Blue2);
     }
 
     public void init() throws IOException {
@@ -370,6 +424,9 @@ public class ControllerController implements Initializable {
 
     @FXML
     private void startMatch(ActionEvent event) {
+        matchController.setField(field1.isSelected() ? 1 : 2);
+        field1.setDisable(true);
+        field2.setDisable(true);
         if (Settings.soundEnabled) {
             try {
                 InputStream audioSrc = Main.class.getResourceAsStream("/Start Auto_normalized.wav");
@@ -403,6 +460,8 @@ public class ControllerController implements Initializable {
         }
         startMatchButton.setDisable(false);
         abortMatchButton.setDisable(true);
+        field1.setDisable(false);
+        field2.setDisable(false);
         matchController.stopMatch();
     }
 
@@ -445,6 +504,9 @@ public class ControllerController implements Initializable {
             match++;
         }
         setMatch(match);
+        field1.setSelected(!field1.isSelected());
+        field2.setSelected(!field1.isSelected());
+        matchController.setField(field1.isSelected() ? 1 : 2);
     }
 
     @FXML
@@ -461,6 +523,9 @@ public class ControllerController implements Initializable {
             match--;
         }
         setMatch(match);
+        field1.setSelected(!field1.isSelected());
+        field2.setSelected(!field1.isSelected());
+        matchController.setField(field1.isSelected() ? 1 : 2);
     }
 
     @FXML
@@ -825,6 +890,8 @@ public class ControllerController implements Initializable {
     private void matchComplete() {
         startMatchButton.setDisable(false);
         abortMatchButton.setDisable(true);
+        field1.setDisable(false);
+        field2.setDisable(false);
     }
     
     @FXML

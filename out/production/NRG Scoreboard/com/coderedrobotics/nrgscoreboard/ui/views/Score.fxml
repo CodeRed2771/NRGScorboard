@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.shape.Rectangle?>
@@ -14,7 +16,15 @@
    <children>
       <StackPane layoutX="58.0" layoutY="62.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ddb17f" height="58.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="4.0" width="900.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" height="58.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="4.0" width="900.0">
+               <fill>
+                  <LinearGradient endX="1.0" endY="0.01904761904761909" startX="1.0" startY="0.9">
+                     <stops>
+                        <Stop color="#ddb17f" />
+                        <Stop color="#ddcab6" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </fill></Rectangle>
             <Label fx:id="match" prefHeight="58.0" prefWidth="900.0" style="-fx-alignment: center;" text="Match #">
                <font>
                   <Font name="System Bold" size="38.0" />
@@ -24,7 +34,7 @@
       </StackPane>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ddb17f" height="408.0" layoutX="62.0" layoutY="139.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="4.0" width="429.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ddb17f" height="408.0" layoutX="533.0" layoutY="139.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="4.0" width="429.0" />
-      <StackPane layoutX="195.0" layoutY="493.0">
+      <StackPane layoutX="195.0" layoutY="495.0">
          <children>
             <Polygon fill="RED" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0">
                <points>
@@ -288,6 +298,26 @@
             <Label fx:id="blueWinsLabel" text="Blue Alliance Wins!">
                <font>
                   <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
+      <StackPane fx:id="redNewHighScore" layoutX="195.0" layoutY="478.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffea00" height="47.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0" width="300.0" />
+            <Label text="NEW HIGH SCORE">
+               <font>
+                  <Font size="26.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
+      <StackPane fx:id="blueNewHighScore" layoutX="529.0" layoutY="478.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffea00" height="47.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0" width="300.0" />
+            <Label text="NEW HIGH SCORE">
+               <font>
+                  <Font size="26.0" />
                </font>
             </Label>
          </children>

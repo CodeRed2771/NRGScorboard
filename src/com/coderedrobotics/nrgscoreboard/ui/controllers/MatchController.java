@@ -2,6 +2,7 @@ package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Main;
 import com.coderedrobotics.nrgscoreboard.Match;
+import com.coderedrobotics.nrgscoreboard.MqttConnection;
 import com.coderedrobotics.nrgscoreboard.Settings;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -57,6 +58,7 @@ public class MatchController implements Initializable {
     private int remainingSeconds = 135;
     private boolean matchRunning = true;
     private Thread currentThread;
+    private int field = 1;
 
     /**
      * Initializes the controller class.
@@ -115,8 +117,10 @@ public class MatchController implements Initializable {
         matchRunning = true;
         timePercentage.setStyle("-fx-progress-color: #0F0;");
         time.setVisible(true);
+        MqttConnection.getInstance().publish("/field/" + field + "/opmode", "teleop", true, 1);
         currentThread = new Thread(() -> {
             while (remainingSeconds >= 0 && matchRunning) {
+                MqttConnection.getInstance().publish("/field/" + field + "/time", String.valueOf(remainingSeconds));
                 timePercentage.setProgress((Settings.matchLength - remainingSeconds) / (double) Settings.matchLength);
                 Platform.runLater(() -> {
                     time.setText(String.format("%01d:%02d", (int) Math.floor(remainingSeconds / 60), remainingSeconds % 60));
@@ -125,6 +129,7 @@ public class MatchController implements Initializable {
                     }
                 });
                 if (remainingSeconds == Settings.endGameDuration && Settings.endGameEnabled) {
+                    MqttConnection.getInstance().publish("/field/" + field + "/opmode", "endgame", true, 1);
                     if (Settings.soundEnabled) {
                         try {
                             InputStream audioSrc = getClass().getResourceAsStream("/Start of End Game_normalized.wav");
@@ -143,6 +148,7 @@ public class MatchController implements Initializable {
                     hotColor.setFill(Paint.valueOf(colors[new Random().nextInt(4)]));
                 }
                 if (remainingSeconds == 0) {
+                    MqttConnection.getInstance().publish("/field/" + field + "/opmode", "disabled", true, 1);
                     timePercentage.setStyle("-fx-progress-color: #FF0000;");
 //                    time.setVisible(false);
                     if (Settings.soundEnabled) {
@@ -173,10 +179,19 @@ public class MatchController implements Initializable {
     }
 
     public void stopMatch() {
+        MqttConnection.getInstance().publish("/field/" + field + "/opmode", "disabled", true, 1);
         matchRunning = false;
         timePercentage.setStyle("-fx-progress-color: #FF0000;");
         timePercentage.setProgress(1.0);
         time.setText("0:00");
         hotColor.setFill(Paint.valueOf("TRANSPARENT"));
+    }
+
+    public int getField() {
+        return field;
+    }
+
+    public void setField(int field) {
+        this.field = field;
     }
 }

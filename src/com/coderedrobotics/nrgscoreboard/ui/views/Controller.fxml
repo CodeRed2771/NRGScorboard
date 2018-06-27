@@ -7,19 +7,21 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="AnchorPane" maxHeight="411.0" maxWidth="561.0" minHeight="411.0" minWidth="561.0" prefHeight="411.0" prefWidth="561.0" stylesheets="@stylesheets/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.ControllerController">
+<AnchorPane fx:id="AnchorPane" maxHeight="617.0" maxWidth="561.0" minHeight="411.0" minWidth="561.0" prefHeight="578.0" prefWidth="561.0" stylesheets="@stylesheets/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.ControllerController">
     <children>
         <Button fx:id="nextMatchButton" disable="true" layoutX="410.0" layoutY="38.0" mnemonicParsing="false" onAction="#nextMatch" prefHeight="47.0" prefWidth="135.0" text="Next Match" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="38.0" />
         <Button fx:id="previousMatchButton" disable="true" layoutX="267.0" layoutY="37.0" mnemonicParsing="false" onAction="#previousMatch" prefHeight="47.0" prefWidth="134.0" text="Previous Match" AnchorPane.rightAnchor="160.0" AnchorPane.topAnchor="37.0" />
-      <Pane layoutX="14.0" layoutY="153.0" prefHeight="266.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="153.0">
+      <Pane layoutX="14.0" layoutY="153.0" prefHeight="245.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="153.0">
          <children>
                 <Label layoutX="14.0" layoutY="14.0" text="Scoring">
                <font>
@@ -82,7 +84,7 @@
                   <Font name="System Bold" size="12.0" />
               </font>
           </Label>
-      <Pane layoutX="283.0" layoutY="153.0" prefHeight="266.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="153.0">
+      <Pane layoutX="283.0" layoutY="153.0" prefHeight="245.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-radius: 6; -fx-border-insets: 5;" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="153.0">
          <children>
             <Label layoutX="14.0" layoutY="14.0" text="Current Display">
                <font>
@@ -166,5 +168,92 @@
          </font>
       </Button>
       <Label fx:id="matchClock" layoutX="14.0" layoutY="61.0" text="00:00" AnchorPane.leftAnchor="14.0" />
+      <RadioButton fx:id="field1" layoutX="176.0" layoutY="101.0" mnemonicParsing="false" selected="true" text="Field 1">
+         <toggleGroup>
+            <ToggleGroup fx:id="currentField" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="field2" layoutX="176.0" layoutY="122.0" mnemonicParsing="false" text="Field 2" toggleGroup="$currentField" />
+      <Pane layoutX="104.0" layoutY="429.0" />
+      <VBox layoutX="137.0" layoutY="411.0" prefHeight="152.0" prefWidth="134.0" spacing="5.0">
+         <children>
+            <Label prefHeight="17.0" prefWidth="465.0" style="-fx-alignment: center;" text="Field 1">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Separator prefWidth="200.0" />
+            <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field1FCSIndicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="FCS" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field1Red1Indicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="Red 1" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field1Red2Indicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="Red 2" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field1Blue1Indicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="Blue 1" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="28.0" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field1Blue2Indicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="Blue 2" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox layoutX="293.0" layoutY="411.0" prefHeight="152.0" prefWidth="134.0" spacing="5.0">
+         <children>
+            <Label prefHeight="17.0" prefWidth="465.0" style="-fx-alignment: center;" text="Field 2">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Separator prefWidth="200.0" />
+            <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field2FCSIndicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="FCS" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field2Red1Indicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="Red 1" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field2Red2Indicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="Red 2" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field2Blue1Indicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="Blue 1" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="28.0" prefHeight="17.0" prefWidth="44.0" spacing="5.0">
+               <children>
+                  <Circle fx:id="field2Blue2Indicator" fill="RED" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Label text="Blue 2" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
     </children>
 </AnchorPane>

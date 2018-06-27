@@ -1,126 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.shape.*?>
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="253.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.PlayoffsControllerController">
+<AnchorPane id="AnchorPane" prefHeight="639.0" prefWidth="460.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.PlayoffsControllerController">
    <children>
-      <VBox layoutX="53.0" layoutY="39.0" prefHeight="280.0" prefWidth="148.0">
+      <Button fx:id="applyPicksButton" layoutX="16.0" layoutY="568.0" mnemonicParsing="false" onAction="#applyRound1Picks" prefHeight="25.0" prefWidth="459.0" text="Apply Alliance Selection Picks And Start Eliminations" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+      <Label layoutX="16.0" layoutY="14.0" prefHeight="17.0" prefWidth="148.0" text="Select Elimination Type" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Label>
+      <Pane fx:id="quarter3Pane" layoutX="53.0" layoutY="395.0" prefHeight="185.0" prefWidth="175.0" AnchorPane.leftAnchor="28.0">
          <children>
-            <HBox alignment="CENTER_LEFT">
-               <VBox.margin>
-                  <Insets bottom="5.0" />
-               </VBox.margin>
+            <Pane layoutY="108.0" prefHeight="76.0" prefWidth="175.0" style="-fx-border-color: DODGERBLUE; -fx-border-width: 5;">
                <children>
-                  <Label text="Rank 1">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="rank1Pick" prefWidth="100.0" />
+                  <ComboBox fx:id="alliance6Team1" layoutX="63.0" layoutY="10.0" prefHeight="25.0" prefWidth="104.0" />
+                  <ComboBox fx:id="alliance6Team2" layoutX="63.0" layoutY="41.0" prefHeight="25.0" prefWidth="104.0" />
+                  <Label layoutX="11.0" layoutY="21.0" prefHeight="17.0" prefWidth="41.0" style="-fx-alignment: center;" text="#6" />
+                  <Label layoutX="11.0" layoutY="40.0" text="Alliance" />
                </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT">
-               <VBox.margin>
-                  <Insets bottom="20.0" />
-               </VBox.margin>
+            </Pane>
+            <Pane layoutY="29.0" prefHeight="76.0" prefWidth="175.0" style="-fx-border-color: RED; -fx-border-width: 5;">
                <children>
-                  <Label text="Rank 8">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="rank8Pick" prefWidth="100.0" />
+                  <ComboBox fx:id="alliance3Team1" layoutX="63.0" layoutY="10.0" prefHeight="25.0" prefWidth="104.0" />
+                  <ComboBox fx:id="alliance3Team2" layoutX="63.0" layoutY="41.0" prefHeight="25.0" prefWidth="104.0" />
+                  <Label layoutX="11.0" layoutY="21.0" prefHeight="17.0" prefWidth="41.0" style="-fx-alignment: center;" text="#3" />
+                  <Label layoutX="11.0" layoutY="40.0" text="Alliance" />
                </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT">
-               <VBox.margin>
-                  <Insets bottom="5.0" />
-               </VBox.margin>
-               <children>
-                  <Label text="Rank 4">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="rank4Pick" prefWidth="100.0" />
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT">
-               <VBox.margin>
-                  <Insets bottom="40.0" />
-               </VBox.margin>
-               <children>
-                  <Label text="Rank 5">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="rank5Pick" prefWidth="100.0" />
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT">
-               <VBox.margin>
-                  <Insets bottom="5.0" />
-               </VBox.margin>
-               <children>
-                  <Label text="Rank 2">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="rank2Pick" prefWidth="100.0" />
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT">
-               <VBox.margin>
-                  <Insets bottom="20.0" />
-               </VBox.margin>
-               <children>
-                  <Label text="Rank 7">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="rank7Pick" prefWidth="100.0" />
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT">
-               <VBox.margin>
-                  <Insets bottom="5.0" />
-               </VBox.margin>
-               <children>
-                  <Label text="Rank 3">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="rank3Pick" prefWidth="100.0" />
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <children>
-                  <Label text="Rank 6">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="rank6Pick" prefWidth="100.0" />
-               </children>
-            </HBox>
+            </Pane>
+            <Label layoutX="5.0" layoutY="6.0" text="Quarter-Final 3">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
          </children>
-      </VBox>
-      <Button fx:id="applyPicksButton" layoutX="53.0" layoutY="351.0" mnemonicParsing="false" onAction="#applyRound1Picks" prefHeight="25.0" prefWidth="148.0" text="Apply Round 1 Picks" />
-      <Label layoutX="53.0" layoutY="14.0" prefHeight="17.0" prefWidth="148.0" style="-fx-alignment: center;" text="Pick Elimination Alliances" />
-      <Label layoutX="14.0" layoutY="91.0" text="SF1" />
-      <Label layoutX="14.0" layoutY="265.0" text="SF2" />
+      </Pane>
+      <Pane fx:id="quarter4Pane" layoutX="278.0" layoutY="395.0" prefHeight="185.0" prefWidth="175.0" AnchorPane.rightAnchor="28.0">
+         <children>
+            <Pane layoutY="108.0" prefHeight="76.0" prefWidth="175.0" style="-fx-border-color: DODGERBLUE; -fx-border-width: 5;">
+               <children>
+                  <ComboBox fx:id="alliance5Team1" layoutX="63.0" layoutY="10.0" prefHeight="25.0" prefWidth="104.0" />
+                  <ComboBox fx:id="alliance5Team2" layoutX="63.0" layoutY="41.0" prefHeight="25.0" prefWidth="104.0" />
+                  <Label layoutX="11.0" layoutY="21.0" prefHeight="17.0" prefWidth="41.0" style="-fx-alignment: center;" text="#5" />
+                  <Label layoutX="11.0" layoutY="40.0" text="Alliance" />
+               </children>
+            </Pane>
+            <Pane layoutY="29.0" prefHeight="76.0" prefWidth="175.0" style="-fx-border-color: RED; -fx-border-width: 5;">
+               <children>
+                  <ComboBox fx:id="alliance4Team1" layoutX="63.0" layoutY="10.0" prefHeight="25.0" prefWidth="104.0" />
+                  <ComboBox fx:id="alliance4Team2" layoutX="63.0" layoutY="41.0" prefHeight="25.0" prefWidth="104.0" />
+                  <Label layoutX="11.0" layoutY="21.0" prefHeight="17.0" prefWidth="41.0" style="-fx-alignment: center;" text="#4" />
+                  <Label layoutX="11.0" layoutY="40.0" text="Alliance" />
+               </children>
+            </Pane>
+            <Label layoutX="5.0" layoutY="6.0" text="Quarter-Final 4">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Pane layoutX="14.0" layoutY="195.0" prefHeight="185.0" prefWidth="175.0" AnchorPane.leftAnchor="28.0">
+         <children>
+            <Pane layoutY="108.0" prefHeight="76.0" prefWidth="175.0" style="-fx-border-color: DODGERBLUE; -fx-border-width: 5;">
+               <children>
+                  <ComboBox fx:id="alliance8Team1" layoutX="63.0" layoutY="10.0" prefHeight="25.0" prefWidth="104.0" />
+                  <ComboBox fx:id="alliance8Team2" layoutX="63.0" layoutY="41.0" prefHeight="25.0" prefWidth="104.0" />
+                  <Label fx:id="semiFinal1UnderdogLabel" layoutX="11.0" layoutY="21.0" prefHeight="17.0" prefWidth="41.0" style="-fx-alignment: center;" text="#8" />
+                  <Label layoutX="11.0" layoutY="40.0" text="Alliance" />
+               </children>
+            </Pane>
+            <Pane layoutY="29.0" prefHeight="76.0" prefWidth="175.0" style="-fx-border-color: RED; -fx-border-width: 5;">
+               <children>
+                  <ComboBox fx:id="alliance1Team1" layoutX="63.0" layoutY="10.0" prefHeight="25.0" prefWidth="104.0" />
+                  <ComboBox fx:id="alliance1Team2" layoutX="63.0" layoutY="41.0" prefHeight="25.0" prefWidth="104.0" />
+                  <Label layoutX="11.0" layoutY="21.0" prefHeight="17.0" prefWidth="41.0" style="-fx-alignment: center;" text="#1" />
+                  <Label layoutX="11.0" layoutY="40.0" text="Alliance" />
+               </children>
+            </Pane>
+            <Label fx:id="semiFinal1Label" layoutX="5.0" layoutY="6.0" text="Quarter-Final 1">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Pane fx:id="quarter2Pane" layoutX="278.0" layoutY="195.0" prefHeight="185.0" prefWidth="175.0" AnchorPane.rightAnchor="28.0">
+         <children>
+            <Pane layoutY="108.0" prefHeight="76.0" prefWidth="175.0" style="-fx-border-color: DODGERBLUE; -fx-border-width: 5;">
+               <children>
+                  <ComboBox fx:id="alliance7Team1" layoutX="63.0" layoutY="10.0" prefHeight="25.0" prefWidth="104.0" />
+                  <ComboBox fx:id="alliance7Team2" layoutX="63.0" layoutY="41.0" prefHeight="25.0" prefWidth="104.0" />
+                  <Label fx:id="semiFinal2UnderdogLabel" layoutX="11.0" layoutY="21.0" prefHeight="17.0" prefWidth="41.0" style="-fx-alignment: center;" text="#7" />
+                  <Label layoutX="11.0" layoutY="40.0" text="Alliance" />
+               </children>
+            </Pane>
+            <Pane layoutY="29.0" prefHeight="76.0" prefWidth="175.0" style="-fx-border-color: RED; -fx-border-width: 5;">
+               <children>
+                  <ComboBox fx:id="alliance2Team1" layoutX="63.0" layoutY="10.0" prefHeight="25.0" prefWidth="104.0" />
+                  <ComboBox fx:id="alliance2Team2" layoutX="63.0" layoutY="41.0" prefHeight="25.0" prefWidth="104.0" />
+                  <Label layoutX="11.0" layoutY="21.0" prefHeight="17.0" prefWidth="41.0" style="-fx-alignment: center;" text="#2" />
+                  <Label layoutX="11.0" layoutY="40.0" text="Alliance" />
+               </children>
+            </Pane>
+            <Label fx:id="semiFinal2Label" layoutX="5.0" layoutY="6.0" text="Quarter-Final 2">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <RadioButton fx:id="fourAllianceSingle" layoutX="14.0" layoutY="44.0" mnemonicParsing="false" text="4 alliance (8 team) Single Elimination" AnchorPane.leftAnchor="14.0">
+         <toggleGroup>
+            <ToggleGroup fx:id="eliminationType" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="fourAllianceDouble" layoutX="14.0" layoutY="67.0" mnemonicParsing="false" text="4 alliance (8 team) Double Elimination" toggleGroup="$eliminationType" AnchorPane.leftAnchor="14.0" />
+      <RadioButton fx:id="eightAllianceSingle" layoutX="14.0" layoutY="91.0" mnemonicParsing="false" text="8 alliance (16 team) Single Elimination" toggleGroup="$eliminationType" AnchorPane.leftAnchor="14.0" />
+      <RadioButton fx:id="eightAllianceDouble" layoutX="14.0" layoutY="115.0" mnemonicParsing="false" selected="true" text="8 alliance (16 team) Double Elimination" toggleGroup="$eliminationType" AnchorPane.leftAnchor="14.0" />
+      <RadioButton fx:id="twoAllianceSingle" layoutX="267.0" layoutY="44.0" mnemonicParsing="false" text="2 Alliance (4 team) 1 match" toggleGroup="$eliminationType" />
+      <RadioButton fx:id="twoAllianceDouble" layoutX="267.0" layoutY="67.0" mnemonicParsing="false" text="2 Alliance (4 team) best of 3" toggleGroup="$eliminationType" />
+      <RadioButton fx:id="roundRobin" disable="true" layoutX="267.0" layoutY="91.0" mnemonicParsing="false" text="Round Robin" toggleGroup="$eliminationType" />
+      <Separator layoutX="14.0" layoutY="154.0" prefHeight="0.0" prefWidth="459.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+      <Label layoutX="14.0" layoutY="168.0" text="Select Alliances">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Label>
    </children>
 </AnchorPane>
