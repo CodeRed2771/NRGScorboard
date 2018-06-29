@@ -76,7 +76,8 @@ public class ControllerController implements Initializable {
     private int match = 0;
     private Parent matchLayoutRoot, logoLayoutRoot, scoreLayoutRoot, preMatchLayoutRoot,
             generateMatchesLayoutRoot, matchesOverviewLayoutRoot, editNamesLayoutRoot,
-            rankingsLayoutRoot, addLateCompetitorLayoutRoot, settingsLayoutRoot;
+            rankingsLayoutRoot, addLateCompetitorLayoutRoot, settingsLayoutRoot,
+            fieldControlsLayoutRoot;
     private Parent playoffsControllerLayoutRoot;
     private Parent currentLayoutRoot;
     private Parent previousLayoutRoot;
@@ -91,6 +92,7 @@ public class ControllerController implements Initializable {
     private Stage rankingsStage = null;
     private Stage addLateCompetitorStage = null;
     private Stage settingsStage = null;
+    private Stage fieldControlsStage = null;
 
     private ScheduleLoader scheduleLoader;
     private EliminationsAdvancer eliminationsAdvancer;
@@ -155,8 +157,11 @@ public class ControllerController implements Initializable {
     private RadioButton logoOnlyDisplayOption;
 
     @FXML
-    private MenuItem generateMatchScheduleMenuItem;
+    private MenuItem viewScheduleMenuItem;
     
+    @FXML
+    private MenuItem generateMatchScheduleMenuItem;
+
     @FXML
     private MenuItem loadScheduleFromCSVMenuItem;
 
@@ -180,41 +185,52 @@ public class ControllerController implements Initializable {
 
     @FXML
     private RadioButton field1;
-    
+
     @FXML
     private RadioButton field2;
-    
+
+    @FXML
+    private Label red1Label;
+
+    @FXML
+    private Label red2Label;
+
+    @FXML
+    private Label blue1Label;
+
+    @FXML
+    private Label blue2Label;
+
     @FXML
     private Circle field1FCSIndicator;
-    
+
     @FXML
     private Circle field1Red1Indicator;
-    
+
     @FXML
     private Circle field1Red2Indicator;
-    
+
     @FXML
     private Circle field1Blue1Indicator;
-    
+
     @FXML
     private Circle field1Blue2Indicator;
-    
+
     @FXML
     private Circle field2FCSIndicator;
-    
+
     @FXML
     private Circle field2Red1Indicator;
-    
+
     @FXML
     private Circle field2Red2Indicator;
-    
+
     @FXML
     private Circle field2Blue1Indicator;
-    
+
     @FXML
     private Circle field2Blue2Indicator;
-    
-    
+
     public ControllerController() {
         scheduleLoader = new ScheduleLoader();
         eliminationsAdvancer = new EliminationsAdvancer();
@@ -235,10 +251,10 @@ public class ControllerController implements Initializable {
         bluePenaltyField.textProperty().addListener((observable, oldValue, newValue) -> {
             recalculateTotalScores();
         });
-        
+
         IndicatorColorManager colorManager = new IndicatorColorManager();
         MqttConnection.getInstance().setColorManager(colorManager);
-        
+
         field1FCSIndicator.fillProperty().bind(colorManager.field1FCS);
         field1Red1Indicator.fillProperty().bind(colorManager.field1Red1);
         field1Red2Indicator.fillProperty().bind(colorManager.field1Red2);
@@ -299,13 +315,17 @@ public class ControllerController implements Initializable {
         FXMLLoader addNewCompetitorLayoutLoader = new FXMLLoader();
         addNewCompetitorLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/AddLateCompetitor.fxml"));
         addLateCompetitorLayoutRoot = (Parent) addNewCompetitorLayoutLoader.load();
-        addLateCompetitorController = addNewCompetitorLayoutLoader.getController();        
-        
+        addLateCompetitorController = addNewCompetitorLayoutLoader.getController();
+
         FXMLLoader settingsLayoutLoader = new FXMLLoader();
         settingsLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/Settings.fxml"));
         settingsLayoutRoot = (Parent) settingsLayoutLoader.load();
         settingsController = settingsLayoutLoader.getController();
         settingsController.setSetupProjectorCallback(this::setupProjectorStage);
+
+        FXMLLoader fieldControlsLayoutLoader = new FXMLLoader();
+        fieldControlsLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/FieldControls.fxml"));
+        fieldControlsLayoutRoot = (Parent) fieldControlsLayoutLoader.load();
 
         setupProjectorStage();
         matchController.setControlDisplayTimeLabel(matchClock);
@@ -404,6 +424,7 @@ public class ControllerController implements Initializable {
         redPenaltyField.setDisable(false);
         bluePenaltyField.setDisable(false);
         viewMatchScheduleButton.setDisable(false);
+        viewScheduleMenuItem.setDisable(false);
 
         generateMatchScheduleMenuItem.setDisable(true);
         loadScheduleFromCSVMenuItem.setDisable(true);
@@ -463,6 +484,7 @@ public class ControllerController implements Initializable {
         field1.setDisable(false);
         field2.setDisable(false);
         matchController.stopMatch();
+        matchClock.setText("0:00");
     }
 
     @FXML
@@ -725,6 +747,10 @@ public class ControllerController implements Initializable {
             blueScoreField.setText(m.isScored() ? String.valueOf(m.getBluePoints()) : "");
             redPenaltyField.setText(m.isScored() ? String.valueOf(m.getRedPenalty()) : "");
             bluePenaltyField.setText(m.isScored() ? String.valueOf(m.getBluePenalty()) : "");
+            red1Label.setText(m.getRed1().getName());
+            red2Label.setText(m.getRed2().getName());
+            blue1Label.setText(m.getBlue1().getName());
+            blue2Label.setText(m.getBlue2().getName());
             if (m.isTieBreaker()) {
                 if (null != m.getType()) {
                     switch (m.getType()) {
@@ -814,7 +840,10 @@ public class ControllerController implements Initializable {
         Stage stage = new Stage();
         stage.setTitle("Add Late Competitor");
         stage.setScene(new Scene(addLateCompetitorLayoutRoot));
-        addLateCompetitorController.setCompletedCallback(stage::hide);
+        addLateCompetitorController.setCompletedCallback(() -> {
+            stage.hide();
+            this.matches = Schedule.getInstance().getMatches();
+        });
         stage.show();
         addLateCompetitorStage = stage;
     }
@@ -861,9 +890,21 @@ public class ControllerController implements Initializable {
         Stage stage = new Stage();
         stage.setTitle("Settings");
         stage.setScene(new Scene(settingsLayoutRoot));
-//        generateMatchesController.setCompletedCallback(this::finishUpInitialization);
         stage.show();
         settingsStage = stage;
+    }
+
+    @FXML
+    private void openFieldControls(ActionEvent event) {
+        if (fieldControlsStage != null) {
+            fieldControlsStage.show();
+            return;
+        }
+        Stage stage = new Stage();
+        stage.setTitle("Field Controls");
+        stage.setScene(new Scene(fieldControlsLayoutRoot));
+        stage.show();
+        fieldControlsStage = stage;
     }
 
     @FXML
@@ -893,7 +934,7 @@ public class ControllerController implements Initializable {
         field1.setDisable(false);
         field2.setDisable(false);
     }
-    
+
     @FXML
     private void addMoreMatchesToSchedule(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -902,7 +943,7 @@ public class ControllerController implements Initializable {
         alert.setContentText("This feature doesn't work yet. Sorry!");
         alert.show();
     }
-    
+
     @FXML
     private void removeCompetitor(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);

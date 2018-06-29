@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -36,7 +37,7 @@ public class SettingsController implements Initializable {
 
     @FXML
     private TextField endGameLengthField;
-    
+
     @FXML
     private CheckBox enableSounds;
 
@@ -54,6 +55,18 @@ public class SettingsController implements Initializable {
 
     @FXML
     private CheckBox windowedModeOption;
+
+    @FXML
+    private CheckBox enableAutonomous;
+
+    @FXML
+    private TextField autonomousLengthField;
+
+    @FXML
+    private RadioButton embeddedBrokerOption;
+
+    @FXML
+    private RadioButton externalBrokerOption;
 
     public SettingsController() {
         aspectRatio1Items = FXCollections.observableArrayList();
@@ -93,12 +106,16 @@ public class SettingsController implements Initializable {
      * Initializes the controller class.
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb) {        
+    public void initialize(URL url, ResourceBundle rb) {
         matchLengthField.setText(String.valueOf(Settings.matchLength));
         endGameLengthField.setText(String.valueOf(Settings.endGameDuration));
         enableSounds.setSelected(Settings.soundEnabled);
         enableEndGame.setSelected(Settings.endGameEnabled);
-        
+        enableAutonomous.setSelected(Settings.autonomousEnabled);
+        autonomousLengthField.setText(String.valueOf(Settings.autonomousDuration));
+        embeddedBrokerOption.setSelected(Settings.useEmbeddedMqttBroker);
+        embeddedBrokerOption.setSelected(!Settings.useEmbeddedMqttBroker);
+
         matchLengthField.textProperty().addListener((e) -> {
             try {
                 Settings.matchLength = Integer.parseInt(matchLengthField.textProperty().get());
@@ -106,7 +123,7 @@ public class SettingsController implements Initializable {
                 Settings.matchLength = 135;
             }
         });
-        
+
         endGameLengthField.textProperty().addListener((e) -> {
             try {
                 Settings.endGameDuration = Integer.parseInt(endGameLengthField.textProperty().get());
@@ -114,13 +131,29 @@ public class SettingsController implements Initializable {
                 Settings.endGameDuration = 30;
             }
         });
-        
+
         enableSounds.selectedProperty().addListener((e) -> {
             Settings.soundEnabled = enableSounds.isSelected();
         });
-        
+
         enableEndGame.selectedProperty().addListener((e) -> {
             Settings.endGameEnabled = enableEndGame.isSelected();
+        });
+
+        enableAutonomous.selectedProperty().addListener((e) -> {
+            Settings.autonomousEnabled = enableAutonomous.isSelected();
+        });
+        
+        autonomousLengthField.textProperty().addListener((e) -> {
+            try {
+                Settings.autonomousDuration = Integer.parseInt(autonomousLengthField.textProperty().get());
+            } catch (NumberFormatException ex) {
+                Settings.autonomousDuration = 0;
+            }
+        });
+        
+        embeddedBrokerOption.selectedProperty().addListener((e) -> {
+            Settings.useEmbeddedMqttBroker = embeddedBrokerOption.selectedProperty().get();
         });
     }
 

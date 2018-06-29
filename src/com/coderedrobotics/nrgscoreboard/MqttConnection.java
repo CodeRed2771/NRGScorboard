@@ -1,6 +1,7 @@
 package com.coderedrobotics.nrgscoreboard;
 
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.IndicatorColorManager;
+import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.RobotConnectionManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -18,6 +19,7 @@ public class MqttConnection {
     private MqttClient client;
     private Thread connectThread;
     public IndicatorColorManager colorManager = null;
+    public RobotConnectionManager robotConnectionManager = null;
     
     private static MqttConnection instance;
     public static MqttConnection getInstance() {
@@ -38,6 +40,10 @@ public class MqttConnection {
 
     public void setColorManager(IndicatorColorManager colorManager) {
         this.colorManager = colorManager;
+    }
+
+    public void setRobotConnectionManager(RobotConnectionManager robotConnectionManager) {
+        this.robotConnectionManager = robotConnectionManager;
     }
     
     private void startConnectThread() {
@@ -73,6 +79,9 @@ public class MqttConnection {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 if (colorManager != null) {
                     colorManager.updateStatusFromMqttMessage(topic, message);
+                }
+                if (robotConnectionManager != null) {
+                    robotConnectionManager.updateStatusFromMqttMessage(topic, message);
                 }
             }
 
