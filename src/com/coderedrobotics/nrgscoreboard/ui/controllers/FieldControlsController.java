@@ -1,6 +1,6 @@
 package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
-import com.coderedrobotics.nrgscoreboard.MqttConnection;
+import com.coderedrobotics.nrgscoreboard.util.MqttConnection;
 import com.coderedrobotics.nrgscoreboard.Settings;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.RobotConnectionManager;
 import java.net.URL;

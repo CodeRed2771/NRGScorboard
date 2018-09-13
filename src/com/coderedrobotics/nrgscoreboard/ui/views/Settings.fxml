@@ -12,14 +12,16 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="390.0" prefWidth="479.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.SettingsController">
    <children>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
-          <Tab text="Display Setup">
+          <Tab text="Display">
                <content>
                   <Pane prefHeight="143.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;">
                      <children>
@@ -65,7 +67,7 @@
                   </Pane>
                </content>
           </Tab>
-          <Tab text="Match Setup">
+          <Tab text="Match">
                <content>
                   <Pane prefHeight="249.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;">
                      <children>
@@ -99,7 +101,7 @@
                   </Pane>
                </content>
           </Tab>
-            <Tab text="Network Setup">
+            <Tab text="Network">
                <content>
                   <Pane prefHeight="249.0" prefWidth="264.0" style="-fx-border-color: #808080; -fx-border-insets: 5; -fx-border-radius: 6;">
                      <children>
@@ -115,10 +117,104 @@
                            </toggleGroup>
                         </RadioButton>
                         <RadioButton fx:id="externalBrokerOption" layoutX="19.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Connect to an external broker" toggleGroup="$brokerGroup" />
-                        <TextField fx:id="brokerLocation" disable="true" layoutX="19.0" layoutY="146.0" prefHeight="25.0" prefWidth="290.0" text="localhost" />
+                        <TextField fx:id="brokerLocation" layoutX="19.0" layoutY="146.0" prefHeight="25.0" prefWidth="290.0" text="10.27.27.200" />
                      </children>
                   </Pane>
                </content>
+            </Tab>
+            <Tab text="Rankings">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="58.0" spacing="5.0">
+                           <children>
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                                 <children>
+                                    <Label text="Rank teams by" />
+                                    <ComboBox fx:id="rankTeamsBy" prefHeight="25.0" prefWidth="210.0">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                               <String fx:value="Ranking Points" />
+                                               <String fx:value="Average Match Score" />
+                                               <String fx:value="Least Penalty Points" />
+                                               <String fx:value="Average Non-Penalty Points" />
+                                               <String fx:value="Wins" />
+                                            </FXCollections>
+                                        </items>
+                                    </ComboBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                                 <children>
+                                    <Label text="then by" />
+                                    <ComboBox fx:id="rankTiebreaker1" prefHeight="25.0" prefWidth="210.0">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                               <String fx:value="Ranking Points" />
+                                               <String fx:value="Average Match Score" />
+                                               <String fx:value="Least Penalty Points" />
+                                               <String fx:value="Average Non-Penalty Points" />
+                                               <String fx:value="Wins" />
+                                            </FXCollections>
+                                        </items>
+                                    </ComboBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                                 <children>
+                                    <Label text="then by" />
+                                    <ComboBox fx:id="rankTiebreaker2" prefHeight="25.0" prefWidth="210.0">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                               <String fx:value="Ranking Points" />
+                                               <String fx:value="Average Match Score" />
+                                               <String fx:value="Least Penalty Points" />
+                                               <String fx:value="Average Non-Penalty Points" />
+                                               <String fx:value="Wins" />
+                                            </FXCollections>
+                                        </items>
+                                    </ComboBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                                 <children>
+                                    <Label text="then by" />
+                                    <ComboBox fx:id="rankTiebreaker3" prefHeight="25.0" prefWidth="210.0">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                               <String fx:value="Ranking Points" />
+                                               <String fx:value="Average Match Score" />
+                                               <String fx:value="Least Penalty Points" />
+                                               <String fx:value="Average Non-Penalty Points" />
+                                               <String fx:value="Wins" />
+                                            </FXCollections>
+                                        </items>
+                                    </ComboBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                                 <children>
+                                    <Label text="then by" />
+                                    <ComboBox fx:id="rankTiebreaker4" prefHeight="25.0" prefWidth="210.0">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                               <String fx:value="Ranking Points" />
+                                               <String fx:value="Average Match Score" />
+                                               <String fx:value="Least Penalty Points" />
+                                               <String fx:value="Average Non-Penalty Points" />
+                                               <String fx:value="Wins" />
+                                            </FXCollections>
+                                        </items>
+                                    </ComboBox>
+                                 </children>
+                              </HBox>
+                              <Label text="Any remaining ties will be broken randomly." />
+                           </children>
+                        </VBox>
+                        <CheckBox fx:id="enableRankingPoints" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="Enable Ranking Points" />
+                     </children>
+                  </AnchorPane>
+              </content>
             </Tab>
         </tabs>
       </TabPane>

@@ -141,7 +141,8 @@ public class ScheduleLoader {
                 if (!data[5].equals("--")) {
                     m.setScore(Integer.parseInt(data[5]), Integer.parseInt(data[6]),
                             Integer.parseInt(data[9]), Integer.parseInt(data[7]),
-                            Integer.parseInt(data[10]), Integer.parseInt(data[8]));
+                            Integer.parseInt(data[10]), Integer.parseInt(data[8]),
+                            Integer.parseInt(data[11]), Integer.parseInt(data[12]));
                 }
                 mn++;
                 matches.add(m);
@@ -193,9 +194,9 @@ public class ScheduleLoader {
         try {
             schedule.createNewFile();
             FileWriter writer = new FileWriter(schedule);
-            writer.write("Match #,Red 1,Red 2,Blue 1,Blue 2,Red Score,Blue Score,Red Penalty,Blue Penalty,Red Points,Blue Points\n");
+            writer.write("Match #,Red 1,Red 2,Blue 1,Blue 2,Red Score,Blue Score,Red Penalty,Blue Penalty,Red Points,Blue Points,Red RP,Blue RP\n");
             for (Match m : Schedule.getInstance().getMatches()) {
-                writer.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+                writer.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
                         m.getNumber(), m.getRed1().getName(), m.getRed2().getName(),
                         m.getBlue1().getName(), m.getBlue2().getName(),
                         m.isScored() ? m.getRedScore() : "--",
@@ -203,7 +204,9 @@ public class ScheduleLoader {
                         m.isScored() ? m.getRedPenalty() : "--",
                         m.isScored() ? m.getBluePenalty() : "--",
                         m.isScored() ? m.getRedPoints() : "--",
-                        m.isScored() ? m.getBluePoints() : "--"));
+                        m.isScored() ? m.getBluePoints() : "--",
+                        m.isScored() ? m.getRedRankingPoints(): "--",
+                        m.isScored() ? m.getBlueRankingPoints() : "--"));
             }
             writer.flush();
             writer.close();

@@ -1,14 +1,11 @@
 package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Match;
-import com.coderedrobotics.nrgscoreboard.Schedule;
+import com.coderedrobotics.nrgscoreboard.Rankings;
+import com.coderedrobotics.nrgscoreboard.Settings;
 import com.coderedrobotics.nrgscoreboard.Team;
 import java.net.URL;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -89,18 +86,8 @@ public class PreMatchController implements Initializable {
         public void run() {
             running = true;
             dislayingRankingsStartingWith = 1;
-            TreeMap<Integer, Integer> map = new TreeMap<>();
-            Team[] teams = Schedule.getInstance().getTeams();
-            for (int i = 0; i < teams.length; i++) {
-                map.put(i, teams[i].getTotalScore());
-            }
-            SortedSet<Map.Entry<Integer, Integer>> sortedEntries = new TreeSet<>(
-                    (Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) -> {
-                        int res = e1.getValue().compareTo(e2.getValue());
-                        return -(res != 0 ? res : 1);
-                    });
-            sortedEntries.addAll(map.entrySet());
-            String data = "";
+//            Team[] teams = Schedule.getInstance().getTeams();
+            Team[] rankedTeams = Rankings.getInstance().getRankedTeams();
             final Label[] rankDisplays = {rank1, rank2, rank3, rank4, rank5, rank6, rank7, rank8, rank9, rank10};
             new Thread(() -> {
                 while (running) {
@@ -109,16 +96,13 @@ public class PreMatchController implements Initializable {
                             rankDisplay.setText("");
                         });
                     }
-
-                    Object[] array = sortedEntries.toArray();
-                    for (int i = dislayingRankingsStartingWith - 1; i < dislayingRankingsStartingWith + 9 && i < array.length; i++) {
-                        Map.Entry<Integer, Integer> e = (Map.Entry<Integer, Integer>) array[i];
-                        final Team t = teams[e.getKey()];
+                    for (int i = dislayingRankingsStartingWith - 1; i < dislayingRankingsStartingWith + 9 && i < rankedTeams.length; i++) {
+                        final Team t = rankedTeams[i];
                         final int index = i;
                         Platform.runLater(() -> {
                             rankDisplays[index % 10].setText("Rank " + String.valueOf(index + 1) + ": " + t.getName()
-                                    + "   (" + t.getWins() + "-" + t.getLosses() + "-"
-                                    + t.getTies() + ")   Total Score: " + t.getTotalScore());
+                                    + (Settings.enableRankingPoints ? "\tAvg. RP: " + t.getAverageRankingPoints() : "") + "\t(" + t.getWins() + "-" + t.getLosses() + "-"
+                                    + t.getTies() + ")\tTotal Penalty Points: " + t.getTotalPenaltyPoints());
                         });
                     }
 
@@ -128,7 +112,7 @@ public class PreMatchController implements Initializable {
                         Logger.getLogger(PreMatchController.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    if (dislayingRankingsStartingWith + 9 < teams.length) {
+                    if (dislayingRankingsStartingWith + 9 < rankedTeams.length) {
                         dislayingRankingsStartingWith += 10;
                     } else {
                         dislayingRankingsStartingWith = 1;
@@ -136,6 +120,5 @@ public class PreMatchController implements Initializable {
                 }
             }).start();
         }
-
     }
 }

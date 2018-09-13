@@ -20,6 +20,7 @@ public class RankingsController implements Initializable {
     @FXML
     private TableView<Team> table;
 
+    private TableColumn<Team, Number> rankCol;
     /**
      * Initializes the controller class.
      */
@@ -34,6 +35,8 @@ public class RankingsController implements Initializable {
         TableColumn<Team, Number> winsCol = new TableColumn<>("Wins");
         TableColumn<Team, Number> lossesCol = new TableColumn<>("Losses");
         TableColumn<Team, Number> tiesCol = new TableColumn<>("Ties");
+        TableColumn<Team, Number> totalRPCol = new TableColumn<>("Total RP");
+        TableColumn<Team, Number> avgRPCol = new TableColumn<>("Avg. RP");
         TableColumn<Team, Number> totalScoreCol = new TableColumn<>("Total Score");
         TableColumn<Team, Number> avgScoreCol = new TableColumn<>("Avg. Score");
         TableColumn<Team, Number> penaltyCol = new TableColumn<>("Alliance Penalty");
@@ -45,12 +48,17 @@ public class RankingsController implements Initializable {
         winsCol.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getWins()));
         lossesCol.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getLosses()));
         tiesCol.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getTies()));
+        totalRPCol.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getTotalRankingPoints()));
+        avgRPCol.setCellValueFactory(c-> new SimpleDoubleProperty(c.getValue().getAverageRankingPoints()));
         totalScoreCol.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getTotalScore()));
-        avgScoreCol.setCellValueFactory(c-> new SimpleDoubleProperty(c.getValue().getAverageScore()));
+        avgScoreCol.setCellValueFactory(c-> new SimpleDoubleProperty(c.getValue().getAverageMatchScore()));
         penaltyCol.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getTotalPenaltyPoints()));
         pointsForCol.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getTotalAlliancePoints()));
 
-        table.getColumns().addAll(rankCol, teamCol, numPlayedCol, winsCol, lossesCol, tiesCol, totalScoreCol, avgScoreCol, penaltyCol, pointsForCol);
+        table.getColumns().addAll(rankCol, teamCol, numPlayedCol, winsCol, lossesCol, 
+                tiesCol, totalRPCol, avgRPCol, totalScoreCol, avgScoreCol, penaltyCol, pointsForCol);
+        
+        this.rankCol = rankCol;
         
         refresh();
     }
@@ -58,7 +66,13 @@ public class RankingsController implements Initializable {
     public void refresh() {
         table.getItems().clear();
         table.getItems().addAll(Schedule.getInstance().getTeams());
+        
+        if (rankCol == null || table.getColumns().isEmpty()) {
+            return;
+        }
+        
         table.getColumns().get(0).setSortType(TableColumn.SortType.ASCENDING);
+        table.getSortOrder().setAll(rankCol);
     }
 
 }

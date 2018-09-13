@@ -2,14 +2,11 @@ package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Schedule;
 import com.coderedrobotics.nrgscoreboard.Match;
+import com.coderedrobotics.nrgscoreboard.Rankings;
 import com.coderedrobotics.nrgscoreboard.Team;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -145,23 +142,11 @@ public class PlayoffsControllerController implements Initializable {
         for (ComboBox box : boxes) {
             box.getItems().addAll((Object[]) teamNames);
         }
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        for (int i = 0;
-                i < teams.length;
-                i++) {
-            map.put(i, teams[i].getTotalScore());
-        }
-        SortedSet<Map.Entry<Integer, Integer>> sortedEntries = new TreeSet<>(
-                (Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) -> {
-                    int res = e1.getValue().compareTo(e2.getValue());
-                    return -(res != 0 ? res : 1);
-                });
-        sortedEntries.addAll(map.entrySet());
-        Object[] array = sortedEntries.toArray();
+        Team[] rankedTeams = Rankings.getInstance().getRankedTeams();
         for (int i = 0;
                 i < 2; i++) {
-            boxes[i * 2].getSelectionModel().select((Object) teams[((Map.Entry<Integer, Integer>) array[i]).getKey()].getName());
-            boxes[i * 2 + 1].getSelectionModel().select((Object) teams[((Map.Entry<Integer, Integer>) array[3 - i]).getKey()].getName());
+            boxes[i * 2].getSelectionModel().select((Object) rankedTeams[i].getName());
+            boxes[i * 2 + 1].getSelectionModel().select((Object) rankedTeams[i].getName());
         }
     }
 
@@ -191,23 +176,11 @@ public class PlayoffsControllerController implements Initializable {
         for (ComboBox box : boxes) {
             box.getItems().addAll((Object[]) teamNames);
         }
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        for (int i = 0;
-                i < teams.length;
-                i++) {
-            map.put(i, teams[i].getTotalScore());
-        }
-        SortedSet<Map.Entry<Integer, Integer>> sortedEntries = new TreeSet<>(
-                (Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) -> {
-                    int res = e1.getValue().compareTo(e2.getValue());
-                    return -(res != 0 ? res : 1);
-                });
-        sortedEntries.addAll(map.entrySet());
-        Object[] array = sortedEntries.toArray();
+        Team[] rankedTeams = Rankings.getInstance().getRankedTeams();
         for (int i = 0;
                 i < 4; i++) {
-            boxes[i * 2].getSelectionModel().select((Object) teams[((Map.Entry<Integer, Integer>) array[i]).getKey()].getName());
-            boxes[i * 2 + 1].getSelectionModel().select((Object) teams[((Map.Entry<Integer, Integer>) array[7 - i]).getKey()].getName());
+            boxes[i * 2].getSelectionModel().select((Object) rankedTeams[i].getName());
+            boxes[i * 2 + 1].getSelectionModel().select((Object) rankedTeams[i].getName());
         }
     }
 
@@ -241,23 +214,11 @@ public class PlayoffsControllerController implements Initializable {
         for (ComboBox box : boxes) {
             box.getItems().addAll((Object[]) teamNames);
         }
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        for (int i = 0;
-                i < teams.length;
-                i++) {
-            map.put(i, teams[i].getTotalScore());
-        }
-        SortedSet<Map.Entry<Integer, Integer>> sortedEntries = new TreeSet<>(
-                (Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) -> {
-                    int res = e1.getValue().compareTo(e2.getValue());
-                    return -(res != 0 ? res : 1);
-                });
-        sortedEntries.addAll(map.entrySet());
-        Object[] array = sortedEntries.toArray();
+        Team[] rankedTeams = Rankings.getInstance().getRankedTeams();
         for (int i = 0;
                 i < 8; i++) {
-            boxes[i * 2].getSelectionModel().select((Object) teams[((Map.Entry<Integer, Integer>) array[i]).getKey()].getName());
-            boxes[i * 2 + 1].getSelectionModel().select((Object) teams[((Map.Entry<Integer, Integer>) array[15 - i]).getKey()].getName());
+            boxes[i * 2].getSelectionModel().select((Object) rankedTeams[i].getName());
+            boxes[i * 2 + 1].getSelectionModel().select((Object) rankedTeams[i].getName());
         }
     }
 

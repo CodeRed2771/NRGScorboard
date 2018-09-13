@@ -12,6 +12,8 @@ public class Match {
     int bluePoints, bluePenalty;
     int redScore = 0;
     int blueScore = 0;
+    int redRankingPoints;
+    int blueRankingPoints;
     boolean scored;
     private boolean setRedPoints, setRedPenalty, setBluePoints, setBluePenalty;
     private MatchType type;
@@ -63,13 +65,16 @@ public class Match {
     }
 
     public void setScore(int red, int blue, int redPoints, int redPenalty,
-                         int bluePoints, int bluePenalty) {
+                         int bluePoints, int bluePenalty, 
+                         int redRankingPoints, int blueRankingPoints) {
         this.redScore = red;
         this.blueScore = blue;
         this.redPoints = redPoints;
         this.redPenalty = redPenalty;
         this.bluePoints = bluePoints;
         this.bluePenalty = bluePenalty;
+        this.redRankingPoints = redRankingPoints;
+        this.blueRankingPoints = blueRankingPoints;
         scored = true;
     }
 
@@ -151,6 +156,22 @@ public class Match {
 
     public void setIsTieBreaker(boolean isTieBreaker) {
         this.isTieBreaker = isTieBreaker;
+    }
+
+    public int getRedRankingPoints() {
+        return redRankingPoints;
+    }
+
+    public void setRedRankingPoints(int redRankingPoints) {
+        this.redRankingPoints = redRankingPoints;
+    }
+
+    public int getBlueRankingPoints() {
+        return blueRankingPoints;
+    }
+
+    public void setBlueRankingPoints(int blueRankingPoints) {
+        this.blueRankingPoints = blueRankingPoints;
     }
     
     public Team replaceTeam(Station station, Team newTeam) {

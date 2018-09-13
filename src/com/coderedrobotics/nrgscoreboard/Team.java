@@ -1,13 +1,14 @@
 package com.coderedrobotics.nrgscoreboard;
 
-import com.coderedrobotics.nrgscoreboard.Match;
+import com.coderedrobotics.nrgscoreboard.Settings.RankingOrderOption;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
  * @author Michael
  */
-public class Team {
+public class Team implements Comparable<Team> {
 
     private String name;
     private final ArrayList<Match> matches;
@@ -20,6 +21,7 @@ public class Team {
     private int rank;
     private int penalty;
     private int points;
+    private int totalRankingPoints;
 
     public Team(String name) {
         this.name = name;
@@ -37,11 +39,14 @@ public class Team {
         wins = 0;
         loses = 0;
         ties = 0;
+        rank = 0;
         penalty = 0;
         points = 0;
+        totalRankingPoints = 0;
         matches.stream().forEach((m) -> {
             if (m.isRed(this)) {
                 totalScore += m.getRedScore();
+                totalRankingPoints += m.getRedRankingPoints();
                 wins += m.getRedScore() > m.getBlueScore() ? 1 : 0;
                 loses += m.getBlueScore() > m.getRedScore() ? 1 : 0;
                 ties += m.getBlueScore() == m.getRedScore() ? 1 : 0;
@@ -49,6 +54,7 @@ public class Team {
                 points += m.getRedPoints();
             } else {
                 totalScore += m.getBlueScore();
+                totalRankingPoints += m.getBlueRankingPoints();
                 wins += m.getBlueScore() > m.getRedScore() ? 1 : 0;
                 loses += m.getRedScore() > m.getBlueScore() ? 1 : 0;
                 ties += m.getBlueScore() == m.getRedScore() ? 1 : 0;
@@ -65,7 +71,7 @@ public class Team {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public int getTotalScore() {
         return totalScore;
     }
@@ -86,23 +92,85 @@ public class Team {
         return matches.size();
     }
 
-    public double getAverageScore() {
-        return ((double) (totalScore)) / getNumberMatchesPlayed();
+    public double getAverageMatchScore() {
+        int numMatches = getNumberMatchesPlayed();
+        if (numMatches == 0) {
+            return 0.0;
+        }
+        return ((double) (totalScore)) / numMatches;
     }
-    
+
     public int getRank() {
         return rank;
     }
-    
+
     public void setRank(int rank) {
         this.rank = rank;
     }
-    
+
     public int getTotalPenaltyPoints() {
         return penalty;
     }
-    
+
     public int getTotalAlliancePoints() {
         return points;
+    }
+
+    public int getTotalRankingPoints() {
+        return totalRankingPoints;
+    }
+
+    public double getAverageRankingPoints() {
+        int numMatches = getNumberMatchesPlayed();
+        if (numMatches == 0) {
+            return 0.0;
+        }
+        return ((double) (totalRankingPoints)) / numMatches;
+    }
+    
+    public double getAverageNonPenaltyPoints() {
+        int numMatches = getNumberMatchesPlayed();
+        if (numMatches == 0) {
+            return 0.0;
+        }
+        return ((double) (points)) / numMatches;
+    }
+
+    @Override
+    public int compareTo(Team o) {
+        if (o == null) {
+            throw new NullPointerException("Cannot compare to null");
+        }
+
+        int result;
+        if ((result = compareBy(Settings.rankTeamsBy, o)) != 0) {
+            return result;
+        } else if ((result = compareBy(Settings.rankTiebreaker1, o)) != 0) {
+            return result;
+        } else if ((result = compareBy(Settings.rankTiebreaker2, o)) != 0) {
+            return result;
+        } else if ((result = compareBy(Settings.rankTiebreaker3, o)) != 0) {
+            return result;
+        } else if ((result = compareBy(Settings.rankTiebreaker4, o)) != 0) {
+            return result;
+        } else {
+            return new Random().nextBoolean() ? 1 : -1;
+        }
+    }
+    
+    private int compareBy(RankingOrderOption option, Team o) {
+        switch (option) {
+            case RANKING_POINTS:
+                return -(int) (this.getAverageRankingPoints() - o.getAverageRankingPoints()); // negate to rank descending 
+            case AVERAGE_MATCH_SCORE:
+                return -(int) (this.getAverageMatchScore() - o.getAverageMatchScore()); // negate to rank descending 
+            case AVERAGE_NON_PENALTY_POINTS:
+                return -(int) (this.getAverageNonPenaltyPoints() - o.getAverageNonPenaltyPoints()); // negate to rank descending 
+            case LEAST_PENALTY_POINTS:
+                return this.penalty - o.penalty;
+            case WINS:
+                return -(this.wins - o.wins); // negate to rank descending 
+        }
+        return 0;
     }
 }

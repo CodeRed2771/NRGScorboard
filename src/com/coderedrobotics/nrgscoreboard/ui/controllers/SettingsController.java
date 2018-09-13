@@ -68,6 +68,24 @@ public class SettingsController implements Initializable {
     @FXML
     private RadioButton externalBrokerOption;
 
+    @FXML
+    private CheckBox enableRankingPoints;
+
+    @FXML
+    private ComboBox rankTeamsBy;
+
+    @FXML
+    private ComboBox rankTiebreaker1;
+
+    @FXML
+    private ComboBox rankTiebreaker2;
+
+    @FXML
+    private ComboBox rankTiebreaker3;
+
+    @FXML
+    private ComboBox rankTiebreaker4;
+
     public SettingsController() {
         aspectRatio1Items = FXCollections.observableArrayList();
         aspectRatio1Items.add("640 x 480");
@@ -107,6 +125,7 @@ public class SettingsController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        windowedModeOption.setSelected(Settings.windowed);
         matchLengthField.setText(String.valueOf(Settings.matchLength));
         endGameLengthField.setText(String.valueOf(Settings.endGameDuration));
         enableSounds.setSelected(Settings.soundEnabled);
@@ -114,7 +133,13 @@ public class SettingsController implements Initializable {
         enableAutonomous.setSelected(Settings.autonomousEnabled);
         autonomousLengthField.setText(String.valueOf(Settings.autonomousDuration));
         embeddedBrokerOption.setSelected(Settings.useEmbeddedMqttBroker);
-        embeddedBrokerOption.setSelected(!Settings.useEmbeddedMqttBroker);
+        externalBrokerOption.setSelected(!Settings.useEmbeddedMqttBroker);
+        enableRankingPoints.setSelected(Settings.enableRankingPoints);
+        rankTeamsBy.getSelectionModel().select(Settings.rankTeamsBy.ordinal());
+        rankTiebreaker1.getSelectionModel().select(Settings.rankTiebreaker1.ordinal());
+        rankTiebreaker2.getSelectionModel().select(Settings.rankTiebreaker2.ordinal());
+        rankTiebreaker3.getSelectionModel().select(Settings.rankTiebreaker3.ordinal());
+        rankTiebreaker4.getSelectionModel().select(Settings.rankTiebreaker4.ordinal());
 
         matchLengthField.textProperty().addListener((e) -> {
             try {
@@ -122,6 +147,7 @@ public class SettingsController implements Initializable {
             } catch (NumberFormatException ex) {
                 Settings.matchLength = 135;
             }
+            Settings.writeFile();
         });
 
         endGameLengthField.textProperty().addListener((e) -> {
@@ -130,31 +156,86 @@ public class SettingsController implements Initializable {
             } catch (NumberFormatException ex) {
                 Settings.endGameDuration = 30;
             }
+            Settings.writeFile();
         });
 
         enableSounds.selectedProperty().addListener((e) -> {
             Settings.soundEnabled = enableSounds.isSelected();
+            Settings.writeFile();
         });
 
         enableEndGame.selectedProperty().addListener((e) -> {
             Settings.endGameEnabled = enableEndGame.isSelected();
+            Settings.writeFile();
         });
 
         enableAutonomous.selectedProperty().addListener((e) -> {
             Settings.autonomousEnabled = enableAutonomous.isSelected();
+            Settings.writeFile();
         });
-        
+
         autonomousLengthField.textProperty().addListener((e) -> {
             try {
                 Settings.autonomousDuration = Integer.parseInt(autonomousLengthField.textProperty().get());
             } catch (NumberFormatException ex) {
                 Settings.autonomousDuration = 0;
             }
+            Settings.writeFile();
         });
-        
+
         embeddedBrokerOption.selectedProperty().addListener((e) -> {
             Settings.useEmbeddedMqttBroker = embeddedBrokerOption.selectedProperty().get();
+            Settings.writeFile();
         });
+
+        enableRankingPoints.selectedProperty().addListener((e) -> {
+            Settings.enableRankingPoints = enableRankingPoints.selectedProperty().get();
+            rankTiebreaker4.getSelectionModel().select(0);
+            rankTiebreaker4.setDisable(!Settings.enableRankingPoints);
+            
+            Settings.writeFile();
+        });
+
+        rankTeamsBy.valueProperty().addListener((sender, oldItem, newItem) -> {
+            rankListener(rankTeamsBy, oldItem, newItem);
+        });
+
+        rankTiebreaker1.valueProperty().addListener((sender, oldItem, newItem) -> {
+            rankListener(rankTiebreaker1, oldItem, newItem);
+        });
+
+        rankTiebreaker2.valueProperty().addListener((sender, oldItem, newItem) -> {
+            rankListener(rankTiebreaker2, oldItem, newItem);
+        });
+
+        rankTiebreaker3.valueProperty().addListener((sender, oldItem, newItem) -> {
+            rankListener(rankTiebreaker3, oldItem, newItem);
+        });
+
+        rankTiebreaker4.valueProperty().addListener((sender, oldItem, newItem) -> {
+            rankListener(rankTiebreaker4, oldItem, newItem);
+        });
+    }
+
+    private void rankListener(ComboBox comboBox, Object oldItem, Object newItem) {
+        ComboBox[] boxes = {rankTeamsBy, rankTiebreaker1, rankTiebreaker2, rankTiebreaker3, rankTiebreaker4};
+        for (ComboBox box : boxes) {
+            if (box == comboBox) {
+                continue;
+            }
+            if (comboBox.getSelectionModel().getSelectedIndex() == box.getSelectionModel().getSelectedIndex()) {
+                int index = 0;
+                for (Object o : comboBox.getItems()) {
+                    if (o == oldItem) {
+                        break;
+                    }
+                    index++;
+                }
+                box.getSelectionModel().select(index);
+            }
+        }
+
+        Settings.writeFile();
     }
 
     @FXML
@@ -178,6 +259,7 @@ public class SettingsController implements Initializable {
                 projectorStage.setX(width);
                 break;
         }
+        Settings.writeFile();
     }
 
     @FXML
@@ -186,6 +268,7 @@ public class SettingsController implements Initializable {
         if (setupProjectorCallback != null) {
             setupProjectorCallback.run();
         }
+        Settings.writeFile();
     }
 
     @FXML
@@ -205,6 +288,7 @@ public class SettingsController implements Initializable {
                 displayResolutionPicker.setItems(aspectRatio4Items);
                 break;
         }
+        Settings.writeFile();
     }
 
     @FXML
@@ -218,5 +302,6 @@ public class SettingsController implements Initializable {
         if (setupProjectorCallback != null) {
             setupProjectorCallback.run();
         }
+        Settings.writeFile();
     }
 }

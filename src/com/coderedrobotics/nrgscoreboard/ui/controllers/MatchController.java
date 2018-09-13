@@ -2,7 +2,7 @@ package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Main;
 import com.coderedrobotics.nrgscoreboard.Match;
-import com.coderedrobotics.nrgscoreboard.MqttConnection;
+import com.coderedrobotics.nrgscoreboard.util.MqttConnection;
 import com.coderedrobotics.nrgscoreboard.Settings;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -105,7 +105,7 @@ public class MatchController implements Initializable {
         } else if (m.getType() == Match.MatchType.FINAL) {
             this.match.setText("Final " + m.getNumberInSeries() + " of " + m.getTotalInSeries());
         }
-        hotColor.setFill(Paint.valueOf("TRANSPARENT"));
+//        hotColor.setFill(Paint.valueOf("TRANSPARENT"));
         this.red1.setText(m.getRed1().getName());
         this.red2.setText(m.getRed2().getName());
         this.blue1.setText(m.getBlue1().getName());
@@ -226,7 +226,7 @@ public class MatchController implements Initializable {
 //                    timePercentage.setStyle("-fx-progress-color: #FFD700;"); // normally, but taken out for following random color selection:
                     String[] colors = {"MAGENTA", "DARKORANGE", "LIME", "YELLOW"};
 //                    timePercentage.setStyle("-fx-progress-color: " + colors[new Random().nextInt(4)] + ";");
-                    hotColor.setFill(Paint.valueOf(colors[new Random().nextInt(4)]));
+//                    hotColor.setFill(Paint.valueOf(colors[new Random().nextInt(4)]));
                 }
                 if (remainingSeconds == 0) {
                     if (field == 1 ? Settings.field1AutomaticOpmode : Settings.field2AutomaticOpmode) {
@@ -269,7 +269,7 @@ public class MatchController implements Initializable {
         timePercentage.setStyle("-fx-progress-color: #FF0000;");
         timePercentage.setProgress(1.0);
         time.setText("0:00");
-        hotColor.setFill(Paint.valueOf("TRANSPARENT"));
+//        hotColor.setFill(Paint.valueOf("TRANSPARENT"));
     }
 
     public int getField() {

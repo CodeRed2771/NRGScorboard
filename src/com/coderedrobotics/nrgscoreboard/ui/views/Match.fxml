@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: #333;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.MatchController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: #333;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coderedrobotics.nrgscoreboard.ui.controllers.MatchController">
    <children>
       <Label fx:id="match" prefHeight="51.0" prefWidth="1024.0" style="-fx-alignment: center;" text="Match 0" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <font>
@@ -141,16 +141,57 @@
             <Font name="System Bold" size="45.0" />
          </font>
       </Label>
-      <Label fx:id="time1" layoutY="467.0" prefHeight="328.0" prefWidth="1024.0" style="-fx-alignment: center;" text="???" textFill="WHITE">
-         <font>
-            <Font size="160.0" />
-         </font>
-      </Label>
-      <Rectangle fx:id="hotColor" arcHeight="100.0" arcWidth="100.0" fill="#33333300" height="239.0" layoutX="28.0" layoutY="511.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="10.0" width="966.0" />
-      <Label layoutX="62.0" layoutY="518.0" style="-fx-alignment: center;" text="HOT COLOR" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="45.0" />
-         </font>
-      </Label>
+      <StackPane layoutX="195.0" layoutY="504.0">
+         <children>
+            <Polygon fill="RED" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0">
+               <points>
+                  <Double fx:value="0.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="300.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="300.0" />
+                  <Double fx:value="250.0" />
+                  <Double fx:value="150.0" />
+                  <Double fx:value="200.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="250.0" />
+               </points>
+            </Polygon>
+            <Label fx:id="redscore" prefHeight="150.0" prefWidth="286.0" style="-fx-alignment: center;" text="00" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="175.0" />
+               </font>
+               <StackPane.margin>
+                  <Insets top="-50.0" />
+               </StackPane.margin>
+            </Label>
+         </children>
+      </StackPane>
+      <StackPane layoutX="529.0" layoutY="504.0">
+         <children>
+            <Polygon fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0">
+               <points>
+                  <Double fx:value="0.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="300.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="300.0" />
+                  <Double fx:value="250.0" />
+                  <Double fx:value="150.0" />
+                  <Double fx:value="200.0" />
+                  <Double fx:value="0.0" />
+                  <Double fx:value="250.0" />
+               </points>
+            </Polygon>
+            <Label fx:id="bluescore" prefHeight="150.0" prefWidth="286.0" style="-fx-alignment: center;" text="00" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="175.0" />
+               </font>
+               <StackPane.margin>
+                  <Insets top="-50.0" />
+               </StackPane.margin>
+            </Label>
+         </children>
+      </StackPane>
    </children>
 </AnchorPane>

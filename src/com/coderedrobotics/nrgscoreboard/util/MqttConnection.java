@@ -1,5 +1,6 @@
-package com.coderedrobotics.nrgscoreboard;
+package com.coderedrobotics.nrgscoreboard.util;
 
+import com.coderedrobotics.nrgscoreboard.Robot;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.IndicatorColorManager;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.RobotConnectionManager;
 import java.util.logging.Level;

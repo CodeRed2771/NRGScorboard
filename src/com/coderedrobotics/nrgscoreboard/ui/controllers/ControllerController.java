@@ -3,9 +3,9 @@ package com.coderedrobotics.nrgscoreboard.ui.controllers;
 import com.coderedrobotics.nrgscoreboard.Main;
 import com.coderedrobotics.nrgscoreboard.Schedule;
 import com.coderedrobotics.nrgscoreboard.Match;
-import com.coderedrobotics.nrgscoreboard.MqttConnection;
+import com.coderedrobotics.nrgscoreboard.util.MqttConnection;
+import com.coderedrobotics.nrgscoreboard.Rankings;
 import com.coderedrobotics.nrgscoreboard.Settings;
-import com.coderedrobotics.nrgscoreboard.Team;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.EliminationsAdvancer;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.IndicatorColorManager;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.ScheduleLoader;
@@ -15,13 +15,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.SortedSet;
 import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
@@ -43,7 +39,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
@@ -77,7 +72,7 @@ public class ControllerController implements Initializable {
     private Parent matchLayoutRoot, logoLayoutRoot, scoreLayoutRoot, preMatchLayoutRoot,
             generateMatchesLayoutRoot, matchesOverviewLayoutRoot, editNamesLayoutRoot,
             rankingsLayoutRoot, addLateCompetitorLayoutRoot, settingsLayoutRoot,
-            fieldControlsLayoutRoot;
+            fieldControlsLayoutRoot, enterScoresLayoutRoot;
     private Parent playoffsControllerLayoutRoot;
     private Parent currentLayoutRoot;
     private Parent previousLayoutRoot;
@@ -93,6 +88,7 @@ public class ControllerController implements Initializable {
     private Stage addLateCompetitorStage = null;
     private Stage settingsStage = null;
     private Stage fieldControlsStage = null;
+    private Stage enterScoresStage = null;
 
     private ScheduleLoader scheduleLoader;
     private EliminationsAdvancer eliminationsAdvancer;
@@ -103,22 +99,22 @@ public class ControllerController implements Initializable {
     private Label currentMatchLabel;
 
     @FXML
-    private TextField redScoreField;
+    private Label redScore;
 
     @FXML
-    private TextField blueScoreField;
+    private Label blueScore;
 
     @FXML
-    private TextField redPenaltyField;
+    private Label redPenaltyPoints;
 
     @FXML
-    private TextField bluePenaltyField;
+    private Label bluePenaltyPoints;
 
     @FXML
-    private Label redTotalScore;
+    private Label redRP;
 
     @FXML
-    private Label blueTotalScore;
+    private Label blueRP;
 
     @FXML
     private Button startMatchButton;
@@ -127,7 +123,7 @@ public class ControllerController implements Initializable {
     private Button abortMatchButton;
 
     @FXML
-    private Button applyScoringButton;
+    private Button manualScoringButton;
 
     @FXML
     private Button viewMatchScheduleButton;
@@ -145,7 +141,10 @@ public class ControllerController implements Initializable {
     private Button eliminationSelectionButton;
 
     @FXML
-    private RadioButton preMatchDisplayOption;
+    private RadioButton preMatchNextDisplayOption;
+
+    @FXML
+    private RadioButton preMatchCurrentDisplayOption;
 
     @FXML
     private RadioButton matchDetailsDisplayOption;
@@ -158,7 +157,7 @@ public class ControllerController implements Initializable {
 
     @FXML
     private MenuItem viewScheduleMenuItem;
-    
+
     @FXML
     private MenuItem generateMatchScheduleMenuItem;
 
@@ -239,19 +238,6 @@ public class ControllerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        redScoreField.textProperty().addListener((observable, oldValue, newValue) -> {
-            recalculateTotalScores();
-        });
-        blueScoreField.textProperty().addListener((observable, oldValue, newValue) -> {
-            recalculateTotalScores();
-        });
-        redPenaltyField.textProperty().addListener((observable, oldValue, newValue) -> {
-            recalculateTotalScores();
-        });
-        bluePenaltyField.textProperty().addListener((observable, oldValue, newValue) -> {
-            recalculateTotalScores();
-        });
-
         IndicatorColorManager colorManager = new IndicatorColorManager();
         MqttConnection.getInstance().setColorManager(colorManager);
 
@@ -326,6 +312,12 @@ public class ControllerController implements Initializable {
         FXMLLoader fieldControlsLayoutLoader = new FXMLLoader();
         fieldControlsLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/FieldControls.fxml"));
         fieldControlsLayoutRoot = (Parent) fieldControlsLayoutLoader.load();
+
+        FXMLLoader enterScoresLayoutLoader = new FXMLLoader();
+        enterScoresLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/EnterScores.fxml"));
+        enterScoresLayoutRoot = (Parent) enterScoresLayoutLoader.load();
+        EnterScoresController enterScoresController = enterScoresLayoutLoader.getController();
+        enterScoresController.setSaveCallback(this::saveScores);
 
         setupProjectorStage();
         matchController.setControlDisplayTimeLabel(matchClock);
@@ -411,18 +403,15 @@ public class ControllerController implements Initializable {
 
         startMatchButton.setDisable(false);
 //        abortMatchButton.setDisable(false);
-        applyScoringButton.setDisable(false);
+        manualScoringButton.setDisable(false);
         previousMatchButton.setDisable(false);
         competitionReportButton.setDisable(false);
         nextMatchButton.setDisable(false);
-        preMatchDisplayOption.setDisable(false);
+        preMatchNextDisplayOption.setDisable(false);
+        preMatchCurrentDisplayOption.setDisable(false);
         matchDetailsDisplayOption.setDisable(false);
         logoOnlyDisplayOption.setDisable(false);
-        redScoreField.setDisable(false);
-        blueScoreField.setDisable(false);
         eliminationSelectionButton.setDisable(false);
-        redPenaltyField.setDisable(false);
-        bluePenaltyField.setDisable(false);
         viewMatchScheduleButton.setDisable(false);
         viewScheduleMenuItem.setDisable(false);
 
@@ -506,7 +495,7 @@ public class ControllerController implements Initializable {
                     m.getBlue2().addMatch(m);
                 }
             }
-            rankTeams();
+            Rankings.getInstance().rankTeams();
         }
     }
 
@@ -529,6 +518,9 @@ public class ControllerController implements Initializable {
         field1.setSelected(!field1.isSelected());
         field2.setSelected(!field1.isSelected());
         matchController.setField(field1.isSelected() ? 1 : 2);
+        if (preMatchNextDisplayOption.isSelected()) {
+            preMatchCurrentDisplayOption.setSelected(true);
+        }
     }
 
     @FXML
@@ -548,11 +540,22 @@ public class ControllerController implements Initializable {
         field1.setSelected(!field1.isSelected());
         field2.setSelected(!field1.isSelected());
         matchController.setField(field1.isSelected() ? 1 : 2);
+        if (preMatchCurrentDisplayOption.isSelected()) {
+            preMatchNextDisplayOption.setSelected(true);
+        }
     }
 
     @FXML
-    private void preMatchDisplayOptionAction(ActionEvent event) {
+    private void preMatchCurrentDisplayOptionAction(ActionEvent event) {
         fadeLayout(preMatchLayoutRoot);
+        preMatchController.updateTeamDisplays(matches[match]);
+        preMatchController.startRankingDisplay();
+    }
+
+    @FXML
+    private void preMatchNextDisplayOptionAction(ActionEvent event) {
+        fadeLayout(preMatchLayoutRoot);
+        preMatchController.updateTeamDisplays(matches[match + 1]);
         preMatchController.startRankingDisplay();
     }
 
@@ -575,39 +578,37 @@ public class ControllerController implements Initializable {
     }
 
     @FXML
-    private void applyScoring(ActionEvent event) {
-        int red, blue, redPenalty, redPoints, bluePoints, bluePenalty;
-        try {
-            redPoints = Integer.parseInt(redScoreField.getText());
-            bluePoints = Integer.parseInt(blueScoreField.getText());
-            redPenalty = Integer.parseInt(redPenaltyField.getText());
-            bluePenalty = Integer.parseInt(bluePenaltyField.getText());
-            red = redPoints + bluePenalty;
-            blue = bluePoints + redPenalty;
-        } catch (NumberFormatException ex) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Invalid Score");
-            alert.setHeaderText(null);
-            alert.setContentText("Enter a valid integer value for both red "
-                    + "and blue scores before applying the scores.");
-
-            alert.show();
+    private void manualScoring(ActionEvent event) {
+        if (enterScoresStage != null) {
+            enterScoresStage.show();
+            enterScoresStage.requestFocus();
             return;
         }
+        Stage stage = new Stage();
+        stage.setTitle("Enter Scores");
+        stage.setScene(new Scene(enterScoresLayoutRoot));
+        stage.show();
+        enterScoresStage = stage;
+    }
+
+    private void saveScores(int red, int blue, int redPoints, int redPenalty, int bluePoints, int bluePenalty, int redRankingPoints, int blueRankingPoints) {
         Match m = matches[match];
-        m.setScore(red, blue, redPoints, redPenalty, bluePoints, bluePenalty);
+        m.setScore(red, blue, redPoints, redPenalty, bluePoints, bluePenalty, redRankingPoints, blueRankingPoints);
         m.getRed1().addMatch(m);
         m.getRed2().addMatch(m);
         m.getBlue1().addMatch(m);
         m.getBlue2().addMatch(m);
-        rankTeams();
+        Rankings.getInstance().rankTeams();
         Platform.runLater(() -> {
             scoreController.updateDisplay(m);
             matchScoreDisplayOption.setDisable(false);
-            redScoreField.setText("");
-            blueScoreField.setText("");
-            redPenaltyField.setText("");
-            bluePenaltyField.setText("");
+
+            redScore.setText(String.valueOf(m.getRedScore()));
+            blueScore.setText(String.valueOf(m.getBlueScore()));
+            redPenaltyPoints.setText(String.valueOf(m.getRedPenalty()) + " From Red Penalty");
+            bluePenaltyPoints.setText(String.valueOf(m.getBluePenalty()) + " From Blue Penalty");
+            redRP.setText("(" + String.valueOf(m.getRedRankingPoints()) + " RP)");
+            blueRP.setText("(" + String.valueOf(m.getBlueRankingPoints()) + " RP)");
         });
 
         if (inEliminations) {
@@ -615,34 +616,15 @@ public class ControllerController implements Initializable {
         }
 
         matchesOverviewController.refresh();
+        rankingsController.refresh();
         scheduleLoader.writeCompetitionBackup();
-    }
-
-    private void recalculateTotalScores() {
-        int bluePoints, redPoints, bluePenalty, redPenalty;
-        try {
-            redPoints = Integer.parseInt(redScoreField.getText());
-            bluePenalty = Integer.parseInt(bluePenaltyField.getText());
-            int red = redPoints + bluePenalty;
-            redTotalScore.setText("Total: " + red);
-        } catch (NumberFormatException ex) {
-            redTotalScore.setText("Total: ---");
-        }
-
-        try {
-            bluePoints = Integer.parseInt(blueScoreField.getText());
-            redPenalty = Integer.parseInt(redPenaltyField.getText());
-            int blue = bluePoints + redPenalty;
-            blueTotalScore.setText("Total: " + blue);
-        } catch (NumberFormatException ex) {
-            blueTotalScore.setText("Total: ---");
-        }
     }
 
     @FXML
     private void competitionReport(ActionEvent event) {
         if (rankingsStage != null) {
             rankingsStage.show();
+            rankingsStage.requestFocus();
             rankingsController.refresh();
             return;
         }
@@ -696,6 +678,7 @@ public class ControllerController implements Initializable {
     private void openEliminationSelectionScreen(ActionEvent event) {
         if (playoffsStage != null) {
             playoffsStage.show();
+            playoffsStage.requestFocus();
             playoffsController.init(this);
             return;
         }
@@ -743,10 +726,12 @@ public class ControllerController implements Initializable {
         Match m = matches[match];
         Platform.runLater(() -> {
             matchScoreDisplayOption.setDisable(!m.isScored());
-            redScoreField.setText(m.isScored() ? String.valueOf(m.getRedPoints()) : "");
-            blueScoreField.setText(m.isScored() ? String.valueOf(m.getBluePoints()) : "");
-            redPenaltyField.setText(m.isScored() ? String.valueOf(m.getRedPenalty()) : "");
-            bluePenaltyField.setText(m.isScored() ? String.valueOf(m.getBluePenalty()) : "");
+            redScore.setText(m.isScored() ? String.valueOf(m.getRedScore()) : "--");
+            blueScore.setText(m.isScored() ? String.valueOf(m.getBlueScore()) : "--");
+            redPenaltyPoints.setText((m.isScored() ? String.valueOf(m.getRedPenalty()) : "--") + " From Red Penalty");
+            bluePenaltyPoints.setText((m.isScored() ? String.valueOf(m.getBluePenalty()) : "--") + " From Blue Penalty");
+            redRP.setText("(" + (m.isScored() ? String.valueOf(m.getRedRankingPoints()) : "-") + " RP)");
+            blueRP.setText("(" + (m.isScored() ? String.valueOf(m.getBlueRankingPoints()) : "-") + " RP)");
             red1Label.setText(m.getRed1().getName());
             red2Label.setText(m.getRed2().getName());
             blue1Label.setText(m.getBlue1().getName());
@@ -777,8 +762,14 @@ public class ControllerController implements Initializable {
                 currentMatchLabel.setText("Current Match: Final " + m.getNumberInSeries() + " of " + m.getTotalInSeries());
             }
             matchController.updateTeamDisplays(m);
-            preMatchController.updateTeamDisplays(matches[match]);
+            if (preMatchNextDisplayOption.isSelected()) {
+                preMatchController.updateTeamDisplays(matches[match + 1]);
+            } else {
+                preMatchController.updateTeamDisplays(matches[match]);
+            }
             scoreController.updateDisplay(m);
+
+            preMatchNextDisplayOption.setDisable(match == matches.length - 1);
         });
     }
 
@@ -786,6 +777,7 @@ public class ControllerController implements Initializable {
     private void generateMatchSchedule(ActionEvent event) {
         if (generateMatchScheduleStage != null) {
             generateMatchScheduleStage.show();
+            generateMatchScheduleStage.requestFocus();
             return;
         }
         Stage stage = new Stage();
@@ -800,6 +792,7 @@ public class ControllerController implements Initializable {
     private void editCompetitorNames(ActionEvent event) {
         if (editCompetitorNamesStage != null) {
             editCompetitorNamesStage.show();
+            editCompetitorNamesStage.requestFocus();
             return;
         }
         Stage stage = new Stage();
@@ -819,6 +812,7 @@ public class ControllerController implements Initializable {
     private void viewMatchOverview(ActionEvent event) {
         if (matchesOverviewStage != null) {
             matchesOverviewStage.show();
+            matchesOverviewStage.requestFocus();
             matchesOverviewController.refresh();
             return;
         }
@@ -835,6 +829,7 @@ public class ControllerController implements Initializable {
     private void addLateCompetitor(ActionEvent event) {
         if (addLateCompetitorStage != null) {
             addLateCompetitorStage.show();
+            addLateCompetitorStage.requestFocus();
             return;
         }
         Stage stage = new Stage();
@@ -859,32 +854,14 @@ public class ControllerController implements Initializable {
         m.getRed2().addMatch(m);
         m.getBlue1().addMatch(m);
         m.getBlue2().addMatch(m);
-        rankTeams();
-    }
-
-    private void rankTeams() {
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        Team[] teams = Schedule.getInstance().getTeams();
-        for (int i = 0; i < teams.length; i++) {
-            map.put(i, teams[i].getTotalScore());
-        }
-        SortedSet<Map.Entry<Integer, Integer>> sortedEntries = new TreeSet<>(
-                (Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) -> {
-                    int res = e1.getValue().compareTo(e2.getValue());
-                    return -(res != 0 ? res : 1);
-                });
-        sortedEntries.addAll(map.entrySet());
-        int rank = 1;
-        for (Map.Entry<Integer, Integer> e : sortedEntries) {
-            teams[e.getKey()].setRank(rank);
-            rank++;
-        }
+        Rankings.getInstance().rankTeams();
     }
 
     @FXML
     private void openSettings(ActionEvent event) {
         if (settingsStage != null) {
             settingsStage.show();
+            settingsStage.requestFocus();
             return;
         }
         Stage stage = new Stage();
@@ -898,6 +875,7 @@ public class ControllerController implements Initializable {
     private void openFieldControls(ActionEvent event) {
         if (fieldControlsStage != null) {
             fieldControlsStage.show();
+            fieldControlsStage.requestFocus();
             return;
         }
         Stage stage = new Stage();

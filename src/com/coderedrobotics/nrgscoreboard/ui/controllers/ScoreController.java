@@ -2,6 +2,7 @@ package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Match;
 import com.coderedrobotics.nrgscoreboard.Schedule;
+import com.coderedrobotics.nrgscoreboard.Settings;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -38,6 +39,14 @@ public class ScoreController implements Initializable {
     private Label redscore;
     @FXML
     private Label bluescore;
+    @FXML
+    private Label redRP;
+    @FXML
+    private Label blueRP;
+    @FXML
+    private StackPane redRankingPointsDisplay;
+    @FXML
+    private StackPane blueRankingPointsDisplay;
     @FXML
     private Label redMatchPoints;
     @FXML
@@ -96,6 +105,10 @@ public class ScoreController implements Initializable {
         }
         redscore.setText(String.valueOf(match.getRedScore()));
         bluescore.setText(String.valueOf(match.getBlueScore()));
+        redRP.setText(String.valueOf(match.getRedRankingPoints()));
+        blueRP.setText(String.valueOf(match.getBlueRankingPoints()));
+        redRankingPointsDisplay.setVisible(Settings.enableRankingPoints);
+        blueRankingPointsDisplay.setVisible(Settings.enableRankingPoints);
         red1info.setText(match.getRed1().getName() + ": Ranked " + match.getRed1().getRank());
         red2info.setText(match.getRed2().getName() + ": Ranked " + match.getRed2().getRank());
         blue1info.setText(match.getBlue1().getName() + ": Ranked " + match.getBlue1().getRank());
