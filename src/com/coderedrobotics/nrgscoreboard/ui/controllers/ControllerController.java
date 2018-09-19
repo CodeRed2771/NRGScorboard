@@ -67,12 +67,13 @@ public class ControllerController implements Initializable {
     private EditNamesController editNamesController;
     private RankingsController rankingsController;
     private AddLateCompetitorController addLateCompetitorController;
+    private AddMoreMatchesController addMoreMatchesController;
     private SettingsController settingsController;
     private int match = 0;
     private Parent matchLayoutRoot, logoLayoutRoot, scoreLayoutRoot, preMatchLayoutRoot,
             generateMatchesLayoutRoot, matchesOverviewLayoutRoot, editNamesLayoutRoot,
             rankingsLayoutRoot, addLateCompetitorLayoutRoot, settingsLayoutRoot,
-            fieldControlsLayoutRoot, enterScoresLayoutRoot;
+            fieldControlsLayoutRoot, enterScoresLayoutRoot, addMoreMatchesLayoutRoot;
     private Parent playoffsControllerLayoutRoot;
     private Parent currentLayoutRoot;
     private Parent previousLayoutRoot;
@@ -89,6 +90,7 @@ public class ControllerController implements Initializable {
     private Stage settingsStage = null;
     private Stage fieldControlsStage = null;
     private Stage enterScoresStage = null;
+    private Stage addMoreMatchesStage = null;
 
     private ScheduleLoader scheduleLoader;
     private EliminationsAdvancer eliminationsAdvancer;
@@ -318,6 +320,11 @@ public class ControllerController implements Initializable {
         enterScoresLayoutRoot = (Parent) enterScoresLayoutLoader.load();
         EnterScoresController enterScoresController = enterScoresLayoutLoader.getController();
         enterScoresController.setSaveCallback(this::saveScores);
+        
+        FXMLLoader addMoreMatchesLayoutLoader = new FXMLLoader();
+        addMoreMatchesLayoutLoader.setLocation(getClass().getResource("/com/coderedrobotics/nrgscoreboard/ui/views/AddMoreMatches.fxml"));
+        addMoreMatchesLayoutRoot = (Parent) addMoreMatchesLayoutLoader.load();
+        addMoreMatchesController = addMoreMatchesLayoutLoader.getController();
 
         setupProjectorStage();
         matchController.setControlDisplayTimeLabel(matchClock);
@@ -428,8 +435,14 @@ public class ControllerController implements Initializable {
         if (matches[match].isScored()) {
             matchScoreDisplayOption.setDisable(false);
         }
+        
+        if (generateMatchScheduleStage != null) {
+            generateMatchScheduleStage.hide();
+        }
 
         currentLayoutRoot = logoLayoutRoot;
+        
+        scheduleLoader.writeCompetitionBackup();
     }
 
     @FXML
@@ -915,11 +928,22 @@ public class ControllerController implements Initializable {
 
     @FXML
     private void addMoreMatchesToSchedule(ActionEvent event) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Not Implemented");
-        alert.setHeaderText(null);
-        alert.setContentText("This feature doesn't work yet. Sorry!");
-        alert.show();
+        if (addMoreMatchesStage != null) {
+            addMoreMatchesStage.show();
+            addMoreMatchesStage.requestFocus();
+            return;
+        }
+        Stage stage = new Stage();
+        stage.setTitle("Add More Matches");
+        stage.setScene(new Scene(addMoreMatchesLayoutRoot));
+        addMoreMatchesController.setCompletedCallback(() -> {
+            this.matches = Schedule.getInstance().getMatches();
+            addMoreMatchesStage.hide();
+            matchesOverviewController.refresh();
+            scheduleLoader.writeCompetitionBackup();
+        });
+        stage.show();
+        addMoreMatchesStage = stage;
     }
 
     @FXML
