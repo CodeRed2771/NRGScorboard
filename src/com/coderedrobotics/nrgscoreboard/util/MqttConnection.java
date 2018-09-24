@@ -1,6 +1,7 @@
 package com.coderedrobotics.nrgscoreboard.util;
 
 import com.coderedrobotics.nrgscoreboard.Robot;
+import com.coderedrobotics.nrgscoreboard.Settings;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.IndicatorColorManager;
 import com.coderedrobotics.nrgscoreboard.ui.controllers.helpers.RobotConnectionManager;
 import java.util.logging.Level;
@@ -32,7 +33,7 @@ public class MqttConnection {
     
     private MqttConnection() {
         try {
-            client = new MqttClient("tcp://test.mosquitto.org", "nrg-field-timer");
+            client = new MqttClient("tcp://" + Settings.mqttBrokerLocation, "nrg-field-timer");
             startConnectThread();
         } catch (MqttException ex) {
             Logger.getLogger(MqttConnection.class.getName()).log(Level.SEVERE, null, ex);

@@ -67,6 +67,9 @@ public class SettingsController implements Initializable {
 
     @FXML
     private RadioButton externalBrokerOption;
+    
+    @FXML
+    private TextField brokerLocation;
 
     @FXML
     private CheckBox enableRankingPoints;
@@ -185,6 +188,11 @@ public class SettingsController implements Initializable {
 
         embeddedBrokerOption.selectedProperty().addListener((e) -> {
             Settings.useEmbeddedMqttBroker = embeddedBrokerOption.selectedProperty().get();
+            Settings.writeFile();
+        });
+        
+        brokerLocation.textProperty().addListener((e) -> {
+            Settings.mqttBrokerLocation = brokerLocation.textProperty().get();
             Settings.writeFile();
         });
 
