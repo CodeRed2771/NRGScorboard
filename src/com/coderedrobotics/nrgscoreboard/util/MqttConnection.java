@@ -74,6 +74,7 @@ public class MqttConnection {
             @Override
             public void connectionLost(Throwable cause) {
                 client = null;
+                colorManager.setMqttConnected(false);
                 startConnectThread();
             }
 
@@ -106,6 +107,7 @@ public class MqttConnection {
         }, new int[] {
             0, 0, 0, 0, 0, 0, 0, 0, 1, 1
         });
+        colorManager.setMqttConnected(true);
     }
     
     public void publish(String topic, String message) {

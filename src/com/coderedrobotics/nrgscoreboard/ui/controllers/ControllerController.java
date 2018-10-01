@@ -231,6 +231,9 @@ public class ControllerController implements Initializable {
 
     @FXML
     private Circle field2Blue2Indicator;
+    
+    @FXML
+    private Circle mqttConnectedIndicator;
 
     public ControllerController() {
         scheduleLoader = new ScheduleLoader();
@@ -253,6 +256,7 @@ public class ControllerController implements Initializable {
         field2Red2Indicator.fillProperty().bind(colorManager.field2Red2);
         field2Blue1Indicator.fillProperty().bind(colorManager.field2Blue1);
         field2Blue2Indicator.fillProperty().bind(colorManager.field2Blue2);
+        mqttConnectedIndicator.fillProperty().bind(colorManager.mqttConnected);
     }
 
     public void init() throws IOException {

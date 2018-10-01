@@ -118,6 +118,7 @@
                         </RadioButton>
                         <RadioButton fx:id="externalBrokerOption" layoutX="19.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Connect to an external broker" toggleGroup="$brokerGroup" />
                         <TextField fx:id="brokerLocation" layoutX="19.0" layoutY="146.0" prefHeight="25.0" prefWidth="290.0" text="10.27.27.200" />
+                        <Label layoutX="19.0" layoutY="181.0" text="You may need to restart this software for changes to the MQTT Broker to take effect." />
                      </children>
                   </Pane>
                </content>

@@ -131,6 +131,7 @@ public class SettingsController implements Initializable {
         windowedModeOption.setSelected(Settings.windowed);
         matchLengthField.setText(String.valueOf(Settings.matchLength));
         endGameLengthField.setText(String.valueOf(Settings.endGameDuration));
+        brokerLocation.setText(Settings.mqttBrokerLocation);
         enableSounds.setSelected(Settings.soundEnabled);
         enableEndGame.setSelected(Settings.endGameEnabled);
         enableAutonomous.setSelected(Settings.autonomousEnabled);

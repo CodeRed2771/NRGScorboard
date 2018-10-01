@@ -236,7 +236,7 @@
       <Label fx:id="redPenaltyPoints" layoutX="427.0" layoutY="462.0" prefWidth="110.0" text="-- From Red Penalty" />
       <Label fx:id="redRP" alignment="CENTER_RIGHT" layoutX="316.0" layoutY="443.0" prefHeight="17.0" prefWidth="43.0" text="(- RP)" />
       <Label fx:id="bluePenaltyPoints" alignment="CENTER_RIGHT" layoutX="294.0" layoutY="462.0" prefWidth="110.0" text="-- From Blue Penalty" />
-      <Circle fx:id="field1Blue2Indicator1" fill="RED" layoutX="91.0" layoutY="571.0" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+      <Circle fx:id="mqttConnectedIndicator" fill="RED" layoutX="91.0" layoutY="571.0" radius="9.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
       <Label layoutX="105.0" layoutY="563.0" text="MQTT Connection" />
     </children>
 </AnchorPane>

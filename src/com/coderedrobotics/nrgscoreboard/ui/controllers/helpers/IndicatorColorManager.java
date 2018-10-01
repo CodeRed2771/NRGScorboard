@@ -28,6 +28,7 @@ public class IndicatorColorManager {
     public ObjectProperty<Color> field2Red2;
     public ObjectProperty<Color> field2Blue1;
     public ObjectProperty<Color> field2Blue2;
+    public ObjectProperty<Color> mqttConnected;
     
     private SimpleDateFormat dateFormat = new SimpleDateFormat("M/d/yyyy hh:mm:ss a");
     
@@ -47,6 +48,7 @@ public class IndicatorColorManager {
         field2Red2 = new SimpleObjectProperty<>(this, "field2Red2", Color.RED);
         field2Blue1 = new SimpleObjectProperty<>(this, "field2Blue1", Color.RED);
         field2Blue2 = new SimpleObjectProperty<>(this, "field2Blue2", Color.RED);
+        mqttConnected = new SimpleObjectProperty<>(this, "mqttBrokerLocation", Color.RED);
         
         lastSeenTimeChecker = new Thread(() -> {
             while (true) {
@@ -119,5 +121,9 @@ public class IndicatorColorManager {
         } catch (ParseException ex) {
             Logger.getLogger(IndicatorColorManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void setMqttConnected(boolean connected) {
+        mqttConnected.set(connected ? Color.LIME : Color.RED);
     }
 }

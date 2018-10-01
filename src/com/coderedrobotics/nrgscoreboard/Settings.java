@@ -34,7 +34,7 @@ public class Settings {
     public static int autonomousDuration = 0;
     public static int endGameDuration = 30;
     
-    public static String mqttBrokerLocation = "test.mosquitto.org";
+    public static String mqttBrokerLocation = "10.27.71.200";
     public static boolean useEmbeddedMqttBroker = false;
     public static boolean field1AutomaticOpmode = true;
     public static boolean field2AutomaticOpmode = true;

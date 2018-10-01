@@ -88,6 +88,13 @@ public class EnterScoresController implements Initializable {
         if (callback != null) {
             callback.accept(red, blue, redPoints, redPenalty, bluePoints, bluePenalty, redRankingPoints, blueRankingPoints);
         }
+        
+        redScoreField.setText("");
+        blueScoreField.setText("");
+        redPenaltyField.setText("");
+        bluePenaltyField.setText("");
+        this.redRankingPoints.setText("");
+        this.blueRankingPoints.setText("");
     }
 
     @FunctionalInterface
