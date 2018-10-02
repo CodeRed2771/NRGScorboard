@@ -42,6 +42,7 @@ public class MqttConnection {
 
     public void setColorManager(IndicatorColorManager colorManager) {
         this.colorManager = colorManager;
+        colorManager.setMqttConnected(client != null && client.isConnected());
     }
 
     public void setRobotConnectionManager(RobotConnectionManager robotConnectionManager) {
@@ -107,7 +108,9 @@ public class MqttConnection {
         }, new int[] {
             0, 0, 0, 0, 0, 0, 0, 0, 1, 1
         });
-        colorManager.setMqttConnected(true);
+        if (colorManager != null) {
+            colorManager.setMqttConnected(true);
+        }
     }
     
     public void publish(String topic, String message) {

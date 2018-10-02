@@ -125,7 +125,7 @@ public class Team implements Comparable<Team> {
         if (numMatches == 0) {
             return 0.0;
         }
-        return ((double) (totalRankingPoints)) / numMatches;
+        return ((double) (totalRankingPoints)) / (double) numMatches;
     }
     
     public double getAverageNonPenaltyPoints() {
@@ -133,7 +133,7 @@ public class Team implements Comparable<Team> {
         if (numMatches == 0) {
             return 0.0;
         }
-        return ((double) (points)) / numMatches;
+        return ((double) (points)) / (double) numMatches;
     }
 
     @Override
@@ -161,16 +161,20 @@ public class Team implements Comparable<Team> {
     private int compareBy(RankingOrderOption option, Team o) {
         switch (option) {
             case RANKING_POINTS:
-                return -(int) (this.getAverageRankingPoints() - o.getAverageRankingPoints()); // negate to rank descending 
+                return -normalize(this.getAverageRankingPoints() - o.getAverageRankingPoints()); // negate to rank descending 
             case AVERAGE_MATCH_SCORE:
-                return -(int) (this.getAverageMatchScore() - o.getAverageMatchScore()); // negate to rank descending 
+                return -normalize(this.getAverageMatchScore() - o.getAverageMatchScore()); // negate to rank descending 
             case AVERAGE_NON_PENALTY_POINTS:
-                return -(int) (this.getAverageNonPenaltyPoints() - o.getAverageNonPenaltyPoints()); // negate to rank descending 
+                return -normalize(this.getAverageNonPenaltyPoints() - o.getAverageNonPenaltyPoints()); // negate to rank descending 
             case LEAST_PENALTY_POINTS:
                 return this.penalty - o.penalty;
             case WINS:
                 return -(this.wins - o.wins); // negate to rank descending 
         }
         return 0;
+    }
+    
+    private int normalize(double value) {
+        return (int) (value / Math.abs(value));
     }
 }
