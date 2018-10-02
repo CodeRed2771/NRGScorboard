@@ -2,6 +2,7 @@ package com.coderedrobotics.nrgscoreboard.ui.controllers;
 
 import com.coderedrobotics.nrgscoreboard.Match;
 import com.coderedrobotics.nrgscoreboard.Rankings;
+import com.coderedrobotics.nrgscoreboard.Schedule;
 import com.coderedrobotics.nrgscoreboard.Settings;
 import com.coderedrobotics.nrgscoreboard.Team;
 import java.net.URL;
@@ -68,6 +69,9 @@ public class PreMatchController implements Initializable {
     }
 
     public void startRankingDisplay() {
+        if (thread != null && thread.running) {
+            thread.running = false; // this should probably throw an exception
+        }
         thread = new UpdaterThread();
         thread.run();
     }
@@ -86,11 +90,10 @@ public class PreMatchController implements Initializable {
         public void run() {
             running = true;
             dislayingRankingsStartingWith = 1;
-//            Team[] teams = Schedule.getInstance().getTeams();
-            Team[] rankedTeams = Rankings.getInstance().getRankedTeams();
             final Label[] rankDisplays = {rank1, rank2, rank3, rank4, rank5, rank6, rank7, rank8, rank9, rank10};
             new Thread(() -> {
                 while (running) {
+                    Team[] rankedTeams = Rankings.getInstance().getRankedTeams();
                     for (Label rankDisplay : rankDisplays) {
                         Platform.runLater(() -> {
                             rankDisplay.setText("");
@@ -100,9 +103,11 @@ public class PreMatchController implements Initializable {
                         final Team t = rankedTeams[i];
                         final int index = i;
                         Platform.runLater(() -> {
-                            rankDisplays[index % 10].setText("Rank " + String.valueOf(index + 1) + ": " + t.getName()
-                                    + (Settings.enableRankingPoints ? "\tAvg. RP: " + t.getAverageRankingPoints() : "") + "\t(" + t.getWins() + "-" + t.getLosses() + "-"
-                                    + t.getTies() + ")\tTotal Penalty Points: " + t.getTotalPenaltyPoints());
+                            rankDisplays[index % 10].setText("Rank " + String.format("%02d", index + 1) + ": " 
+                                    + String.format("%-" + (Schedule.getInstance().getLengthOfLongestTeamName() + 1) + "s", t.getName())
+                                    + (Settings.enableRankingPoints ? "\tAvg. RP: " + String.format("%.3f", t.getAverageRankingPoints()) : "") 
+                                    + "\t\t(" + t.getWins() + "-" + t.getLosses() + "-" + t.getTies() 
+                                    + ")\tTotal Penalty Points: " + t.getTotalPenaltyPoints());
                         });
                     }
 

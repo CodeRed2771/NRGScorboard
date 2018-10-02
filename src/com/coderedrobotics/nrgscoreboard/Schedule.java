@@ -11,6 +11,7 @@ public class Schedule {
     private static Schedule instance;
     private Team[] teams;
     
+    private int lengthOfLongestTeamName;
     private int matchesPerTeam;
     private int currentMatch;
     
@@ -22,6 +23,14 @@ public class Schedule {
     public static void initialize(Match[] matches, Team[] teams, int matchesPerTeam) {
         instance = new Schedule(matches, teams);
         instance.matchesPerTeam = matchesPerTeam;
+        
+        int lengthOfLongestTeamName = 0;
+        for (Team t : teams) {
+            if (t.getName().length() > lengthOfLongestTeamName) {
+                lengthOfLongestTeamName = t.getName().length();
+            }
+        }
+        instance.lengthOfLongestTeamName = lengthOfLongestTeamName;
     }
 
     public static Schedule getInstance() {
@@ -103,5 +112,9 @@ public class Schedule {
             }
         }
         return score;
+    }
+    
+    public int getLengthOfLongestTeamName() {
+        return lengthOfLongestTeamName;
     }
 }

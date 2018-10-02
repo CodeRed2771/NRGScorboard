@@ -128,7 +128,7 @@
       </Label>
       <Label fx:id="time" layoutY="223.0" prefHeight="328.0" prefWidth="1024.0" style="-fx-alignment: center;" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <font>
-            <Font size="225.0" />
+            <Font size="400.0" />
          </font>
       </Label>
       <StackPane layoutX="178.0" layoutY="232.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="232.0">
@@ -138,12 +138,12 @@
       </StackPane>
       <Label layoutX="14.0" layoutY="232.0" style="-fx-alignment: center;" text="REMAINING TIME" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <font>
-            <Font name="System Bold" size="45.0" />
+            <Font name="System Bold" size="75.0" />
          </font>
       </Label>
-      <StackPane layoutX="195.0" layoutY="504.0">
+      <StackPane layoutX="195.0" layoutY="504.0" visible="false">
          <children>
-            <Polygon fill="RED" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0">
+            <Polygon fill="RED" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0" visible="false">
                <points>
                   <Double fx:value="0.0" />
                   <Double fx:value="0.0" />
@@ -157,7 +157,7 @@
                   <Double fx:value="250.0" />
                </points>
             </Polygon>
-            <Label fx:id="redscore" prefHeight="150.0" prefWidth="286.0" style="-fx-alignment: center;" text="00" textFill="WHITE">
+            <Label fx:id="redscore" prefHeight="150.0" prefWidth="286.0" style="-fx-alignment: center;" text="00" textFill="WHITE" visible="false">
                <font>
                   <Font name="System Bold" size="175.0" />
                </font>
@@ -167,7 +167,7 @@
             </Label>
          </children>
       </StackPane>
-      <StackPane layoutX="529.0" layoutY="504.0">
+      <StackPane layoutX="529.0" layoutY="504.0" visible="false">
          <children>
             <Polygon fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE" strokeWidth="4.0">
                <points>
